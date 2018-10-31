@@ -1,0 +1,106 @@
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { Tab,TabBody,Panel,PanelBody,SearchBar,MediaBox,MediaBoxHeader,
+    MediaBoxBody,MediaBoxTitle,MediaBoxDescription,MediaBoxInfo,
+    MediaBoxInfoMeta } from 'react-weui';
+import TempImg from '../../img/reservation_donation.png';
+
+class Locations extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            locations: []
+        }
+    }
+
+    componentDidMount() {
+        fetch(
+            '/db/locations',
+            {
+                method: 'get'
+            }
+        ).then(this.parseJson)
+         .then(json => {
+             this.setState({ locations: json });
+         })
+    }
+
+    parseJson(response) {
+        return response.json();
+    }
+
+    // handleClick(location_id) {
+    //     console.log(location_id);
+    //     //this.props.history.push('/home');
+    // }
+
+    render() {
+
+        const locationsComponent = this.state.locations.map( location => (
+            <Location locationsPath={this.props.match.path}
+              key={'location-'+ location[0]}
+              location_id = {location[0]}
+              location_name = {location[1]}
+              //district_name = {location[2]}
+              district_name = '所在区'
+              officetime = {`${location[2]} - ${location[3]}`}
+              // officetime = {`${location[2]}`}
+              //specific_position = {location[5]}
+              specific_position = {location[4]}
+            />
+        ))
+
+        return (
+            <div>
+                <Tab>
+                    <TabBody>
+                        <Panel>
+                            <PanelBody>
+                                <SearchBar placeholder='请输入查询的献血点名称' lang={{ cancel: '取消' }} />
+                                {locationsComponent}
+                            </PanelBody>
+                        </Panel>
+                    </TabBody>
+                </Tab>
+                
+            </div>
+        );
+    }
+}
+
+
+class Location extends React.Component {
+
+    /* handleClick = () => (
+        this.props.onClick(this.props.location_id)
+    ); */
+
+
+    render() {
+        return (
+            <div >
+                <MediaBox type="appmsg">
+                    <NavLink to={`${this.props.locationsPath}/${this.props.location_id}`}>
+                        <MediaBoxHeader>
+                            <img src={TempImg} />
+                        </MediaBoxHeader>
+                    </NavLink>
+                    <MediaBoxBody  >
+                        <MediaBoxTitle>
+                            {this.props.location_name}
+                        </MediaBoxTitle>
+                        <MediaBoxDescription>
+                            {this.props.specific_position}
+                        </MediaBoxDescription>
+                        <MediaBoxInfo>
+                            <MediaBoxInfoMeta>{this.props.district_name}</MediaBoxInfoMeta>
+                            <MediaBoxInfoMeta extra >{this.props.officetime}</MediaBoxInfoMeta>
+                        </MediaBoxInfo>
+                    </MediaBoxBody>
+                </MediaBox>
+            </div>
+        );
+    }
+}
+
+export default Locations;

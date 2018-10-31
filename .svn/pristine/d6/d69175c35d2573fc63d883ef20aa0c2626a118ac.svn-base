@@ -1,0 +1,168 @@
+import React from 'react';
+import { Modal, Form, Input, Select  } from 'antd';
+const FormItem = Form.Item;
+
+class PeriodEditModel extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            visable: false,
+            locations: [],
+
+            // 提交数据
+            location_id: '',
+            values: {
+                start: '',
+                end: '',
+                aviable: '',
+            }
+
+        };
+
+        this.handleSelectorChange = this.handleSelectorChange.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+    }
+
+    showModelHandler = (e) => {
+        if (e) e.stopPropagation();
+        this.setState({
+            visible: true,
+        });
+    };
+
+    hideModelHandler = () => {
+        this.setState({
+            visible: false,
+        });
+    };
+
+    okHandler = () => {
+        const { onOk } = this.props;
+        this.props.form.validateFields((err,values) => {
+            if (!err) {
+                onOk(values)
+                this.hideModelHandler()
+            }
+        });
+    };
+
+    componentDidMount() {
+        fetch(
+            '/db/locations',
+            {
+                method: 'get'
+            }
+        ).then(res => res.json())
+         .then(json => {
+             this.setState({ locations: json });
+         })
+    }
+
+    handleSelectorChange(value) {
+        this.setState({location_id: value});
+    }
+
+    handleInputChange(e) {
+        this.setItemValue(e.target.name,e.target.value);
+        //console.log(this.state.values);
+    }
+
+    setItemValue(field,value){
+      let _values = Object.assign({},this.state.values,{[field]:value});
+      this.setState({values:_values});
+    }
+
+    render() {
+        const { children } = this.props;
+        const { getFieldDecorator } = this.props.form;
+        //console.log(`the record object is :${JSON.stringify(this.props.record)}`);
+
+        //const { name, email, website } = this.props.record;
+        const { location_id, periodstart, periodend, available } = this.props.record;
+        //console.log(`the record object include the -> collectionpoint: ${collectionpoint}`);
+        const formItemLayout = {
+            labelCol: { span: 6 },
+            wrapperCol: { span: 14 },
+        };
+
+        const selectComponent = this.state.locations.map(x => {
+            return (<Select.Option value={x[0]}>{x[1]}</Select.Option>)
+        });
+
+        return (
+            <span>
+                <span onClick={this.showModelHandler}>
+                    {children}
+                </span>
+                <Modal
+                   title="修改-采血点预约信息"
+                   visible={this.state.visible}
+                   onOk={this.okHandler}
+                   onCancel={this.hideModelHandler}
+                >
+                <Form horizontal onSubmit={this.okHandler}>
+                   <FormItem
+                      {...formItemLayout}
+                      label="采血点"
+                   >
+                       {
+                          getFieldDecorator('collectionpoint',{
+                              initialValue: location_id,
+                          })(<Select
+                               onChange={this.handleSelectorChange}
+                               >
+                              {selectComponent}
+                          </Select>)
+                        }
+                   </FormItem>
+                   <FormItem
+                      {...formItemLayout}
+                      label="预约时间段（开始）" 
+                   >
+                       {
+                          getFieldDecorator('start',{
+                              initialValue: periodstart,
+                          })(<Input
+                               name="start"
+                               onChange={this.handleInputChange}
+                             />)
+                        }
+
+                   </FormItem>
+                   <FormItem
+                      {...formItemLayout}
+                      label="预约时间段（结束）" 
+                   >
+                       {
+                          getFieldDecorator('end',{
+                              initialValue: periodend,
+                          })(<Input
+                              name="end"
+                              onChange={this.handleInputChange}
+                            />)
+                        }
+
+                   </FormItem>
+                   <FormItem
+                      {...formItemLayout}
+                      label="可预约人数" 
+                   >
+                       {
+                          getFieldDecorator('available',{
+                              initialValue: available,
+                          })(<Input 
+                               name="available"
+                               onChange={this.handleInputChange}
+                              />)
+                        }
+
+                   </FormItem>
+                </Form>
+                </Modal>
+            </span>
+        );
+    }
+
+}
+
+export default Form.create()(PeriodEditModel);

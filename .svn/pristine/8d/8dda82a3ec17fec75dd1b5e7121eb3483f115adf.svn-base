@@ -1,0 +1,248 @@
+import React from 'react';
+import { Preview,PreviewHeader,PreviewItem,PreviewBody,Form,FormCell, 
+    CellHeader, Label, CellBody, Input, CellsTitle, TextArea, Cell  , 
+    ButtonArea, Button,Panel , CellFooter, PanelBody, Dialog, Radio, Badge   } from 'react-weui';
+import { NavLink } from 'react-router-dom';
+
+class Reservation extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            // 已经选定的预约地点
+            // 仅使用location_id
+            location_id: this.props.match.params.location_id,
+            location: [],
+
+            // 预约时间段
+            show: false,
+            style: {
+                title: "预约时间段",
+                buttons: [
+                    {
+                        label: '确定',
+                        onClick: this.handleDialogClick.bind(this)
+                    }
+                ]
+            },
+            reservinfo: [],
+            // 插入数据表的时候仅需插入预约时间段的主键，
+            displayText: '',
+
+            // 以下为提交内容
+            reserv_date: new Date,
+            reserv_period: 1,  //预约时间段
+            // 个人信息
+            user_id: 1,
+            //  备注
+            comms: '',
+            
+            // 用户信息
+            userinfo: []
+
+
+        };
+        this.handleonChangeRadio = this.handleonChangeRadio.bind(this);
+        this.handlereservDateChange = this.handlereservDateChange.bind(this);
+
+    }
+
+    handleDialogClick(){
+        this.setState({ show: false });
+    }
+
+    componentDidMount() {
+        // 采血点信息
+        const url = '/db/location?location_id=' + this.state.location_id;
+        fetch(
+            url,
+            {
+                method: 'get',
+                headers: {
+                    accept: 'application/json'
+                }
+            }
+        ).then(res => res.json())
+         .then(json => this.setState({ location: json.rows[0] }));
+        
+        // 采血点预约时间段信息
+        const urlresv = '/db/location/reservation?location_id=' + this.state.location_id;
+        fetch(
+            urlresv,
+            {
+                method: 'get',
+                headers: {
+                    accept: 'application/json'
+                }
+            }
+        ).then(res => res.json())
+         .then(json => {
+            let { rows } = json;
+            //console.log(json);
+            this.setState({ reservinfo: rows });
+            console.log(`this.state.reservinfo: ${this.state.reservinfo}    `);
+         });
+         
+         // 取个人信息
+         fetch(
+             '/db/userinfo',
+             {
+                 method: 'get',
+                 headers: {
+                     accept: 'application/json'
+                 }
+             }
+         ).then(res => res.json())
+          .then(json => {
+              console.log(json);
+              this.setState({
+                  userinfo: json.userinfo
+              });
+          });
+         
+    }
+
+    handleSubmit() {
+
+        const reservdata = {
+            date: this.state.reserv_date,
+            period: this.state.reserv_period,
+            user_id: this.state.user_id,
+            comms: this.state.comms,
+            //create_date : localDate,
+        } 
+
+        fetch('/db/volunteer/add_resv',{
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(reservdata),
+          }).then(response => response.json()
+            .then(updatedApply => {
+                var { msg } = updatedApply;
+                //this.setState({ responseMsg: msg });
+                // 此时创建的属性已经因路由二挂载组件，不可访问了，
+                this.state.responseMsg = msg;
+            }));
+
+    }
+
+    handleonChangeRadio(e) {
+        this.setState({reserv_period: e.target.value});
+        const selected = this.state.reservinfo.filter( x => x[0] == e.target.value);
+        this.setState({displayText: `${selected[0][2]}~${selected[0][3]}`});
+        console.log(this.state.displayText);
+    }
+
+    handlereservDateChange(e) {
+        this.setState({ reserv_date: e.target.value })
+    }
+
+    handletextAreaChange(e) {
+        //console.log(e.target.value);
+        this.setState({ comms: e.target.value })
+    }
+
+
+    render() {
+
+        const reservinfoComponent = this.state.reservinfo.map(x => (
+            <FormCell radio key={x[0]}>
+                    <CellHeader>
+                    {`${x[2]}-${x[3]}`}
+                    </CellHeader>
+                    <CellBody>
+                        可预约
+                       <Badge preset="body" >{`${x[4]}人`}</Badge>
+                    </CellBody>
+                    <CellFooter>
+                        <Radio onClick={this.handleonChangeRadio}  name="radio1" value={x[0]}/>
+                    </CellFooter>
+            </FormCell>
+        ))
+
+        return (
+            <div>
+                <Panel>
+                    <PanelBody>
+                        <CellsTitle>预约服务地点</CellsTitle>
+                        <Form>
+                            <Preview>
+                                <PreviewHeader>
+                                    <PreviewItem label='采血点' value={`${this.state.location[1]}`} />
+                                </PreviewHeader>
+                                <PreviewBody>
+                                    {/* <PreviewItem label='工作时间' value={`${this.state.location[8]}-${this.state.location[9]}`} /> */}
+                                    <PreviewItem label='工作时间' value={`${this.state.location[2]}`} />
+                                    {/* <PreviewItem label='详细地址' value={`${this.state.location[10]}`} /> */}
+                                    <PreviewItem label='详细地址' value={`${this.state.location[3]}`} />
+                                </PreviewBody>
+                            </Preview>
+                        </Form>
+                        <CellsTitle>个人信息</CellsTitle>
+                        <Form>
+                            <Preview>
+                                <PreviewHeader>
+                                    <PreviewItem label='姓名' value={this.state.userinfo[0]} />
+                                </PreviewHeader>
+                                <PreviewBody>
+                                    <PreviewItem label='身份证号' value={this.state.userinfo[1]} />
+                                    <PreviewItem label='手机号' value={this.state.userinfo[2]} />
+                                </PreviewBody>
+                            </Preview>
+                        </Form>
+                        <CellsTitle>预约时间</CellsTitle>
+                        <Form>
+                            <FormCell>
+                                <CellHeader>
+                                    <Label>预约日期</Label>
+                                </CellHeader>
+                                <CellBody>
+                                    <Input type="date" value={this.state.reserv_date} onChange={this.handlereservDateChange}/>
+                                </CellBody>
+                            </FormCell>
+                            <FormCell>
+                                <CellHeader>
+                                    <Label>预约时间段</Label>
+                                </CellHeader>
+                                <CellBody>
+                                    <Label type="datetime-local"  defaultValue="" placeholder="请选择预约时间段">
+                                    &nbsp;{this.state.displayText}
+                                    </Label>
+                                </CellBody>
+                                <CellFooter>
+                                    <Button onClick={() => {this.setState({ show: true })}} type="vcode">选择</Button>
+                                </CellFooter>
+                            </FormCell>
+                            <FormCell>
+                                <CellBody>
+                                    <TextArea placeholder="请输入备注" onChange={this.handletextAreaChange.bind(this)} rows="3"></TextArea>
+                                </CellBody>
+                            </FormCell>
+                        </Form>
+                        <ButtonArea>
+                        <NavLink to='/volunteer/reservation/success'>
+                            <Button
+                                onClick={() => {
+                                    this.handleSubmit();
+                                }}>
+                                确认
+                            </Button>
+                        </NavLink>
+                    </ButtonArea>
+                </PanelBody>
+                <Dialog 
+                    type="ios" title={this.state.style.title} 
+                    show={this.state.show}
+                    buttons={this.state.style.buttons} >
+                    <div>
+                        <Form radio>
+                        { reservinfoComponent }
+                        </Form>
+                    </div>
+               </Dialog>
+              </Panel>
+            </div>
+        )
+    }
+}
+
+export default Reservation;

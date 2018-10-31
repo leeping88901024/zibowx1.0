@@ -1,0 +1,13 @@
+.fixedHeader {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9;
+  transition: width 0.2s;
+}
+
+
+span:hover
+{ 
+background-color:#E6E6E6;
+}

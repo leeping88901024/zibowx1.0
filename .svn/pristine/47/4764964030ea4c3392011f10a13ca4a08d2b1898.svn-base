@@ -1,0 +1,8 @@
+.header_title{
+    height: 6vh;
+    line-height:6vh;
+    background: #fff;
+    padding: 0;
+    font-size: 18px;
+    text-align:center
+}
