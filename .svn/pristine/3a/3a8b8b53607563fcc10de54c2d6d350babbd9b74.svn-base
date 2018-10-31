@@ -1,9 +1,0 @@
-{
-    "presets": ["env", "react"],
-    "plugins": [
-      ["import", { "libraryName": "antd-mobile", "style": "css" }],
-      ["transform-class-properties"],
-      ["transform-object-rest-spread"]
-    ]
-  }
-  
