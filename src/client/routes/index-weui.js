@@ -111,7 +111,7 @@ class WeuiRoute extends React.Component {
                     <Route path='/my/volunteer/reserv' component={ MyReserv } />
                     <Route path='/my/reaction' component={ MyReaction } />
                     <Route path='/reaction' component={ Reaction } />
-                    <Route path='/learntoknow' component={ Learntoknow } />
+                    <Route path='/learntoknow' component={ Private(Learntoknow) } />
                     <Route path='/reimburse' component={ Reimburse } />
                     <Route path='/reimbursesuccess' component={ ReimburseSuccessMsg } />
                     <Route path='/editreimbursesuccess' component={ EditReimburseSuccessMsg } />

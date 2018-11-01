@@ -136,8 +136,7 @@ router.get('/relationship', (req, res) => {
 
 router.post('/add_apply', (req, res) => {
      const data = req.body;
-     console.log(req.session.userid);
-     let userid = req.session.userid
+     let userid = req.session.user.openid
      db.execute(`insert into WX_VOLUNTEER_APPLY(NAME,idcard,phone,email,company,profession,education,nation,abogroup,isdonation,address,ispermanentresidence,residence,profileimg,user_id,create_date,form_state)
                  values(:NAME,:idcard,:phone,:email,:company,:profession,:education,:nation,:abogroup,:isdonation,:address,:ispermanentresidence,:residence,:profileimg,:user_id,sysdate,:form_state)`,
                 [
@@ -172,6 +171,7 @@ router.post('/add_apply', (req, res) => {
  });
 
 router.get('/query_apply', (req, res) => {
+    let userid = req.session.user.openid;
     db.execute(
         `select  t.id,
         t.name,
@@ -202,7 +202,7 @@ router.get('/query_apply', (req, res) => {
         and t.abogroup = a.id_abo
         and t.form_state = s.id
         order by t.create_date desc`,
-        [req.session.userid],
+        [userid],
         (err,result) => {
             res.send(
                 {
@@ -214,6 +214,7 @@ router.get('/query_apply', (req, res) => {
 });
 
 router.get('/query_reimburse',(req,res) => {
+    let userid = req.session.user.openid;
     db.execute(
         `select t.id,
             r.relation_type_desc,
@@ -233,7 +234,7 @@ router.get('/query_reimburse',(req,res) => {
         where t.relation = r.relation_type_code
           and t.state = s.id
         order by t.create_date desc`,
-        [req.session.userid],
+        [userid],
         (err,result) => {
             res.json(
                 {
@@ -245,7 +246,8 @@ router.get('/query_reimburse',(req,res) => {
 });
 
 router.get('/query_reserv', (req, res) => {
-    console.log(`i am query reservations, the user's infomation is ${req.session.userid}`);
+    // console.log(`i am query reservations, the user's infomation is ${req.session.userid}`);
+    let userid = req.session.user.openid;
     db.execute(
         `select t.comms,
         t.create_date,
@@ -261,7 +263,7 @@ router.get('/query_reserv', (req, res) => {
           and l.location_seq = p.location_id
           and s.id = t.reserv_state
         order by t.create_date desc`,
-        [req.session.userid],
+        [userid],
         (err,result) => {
             // console.log(result);
             if(result == undefined) { return; }
@@ -544,7 +546,7 @@ router.get('/selectedperiod', (req, res) => {
 
 router.post('/volunteer/add_resv', (req, res) => {
     const data = req.body;
-    let userid = req.session.userid;
+    let userid = req.session.user.openid;
     const bindvars = {
         period: data.period,
         user_id: userid,
@@ -647,6 +649,7 @@ router.get('/doninfo', (req, res) => {
 router.post('/add_reimburse', (req, res) => {
     const data = req.body;
     //console.log(`the bloodusername is ${data.bloodusername}`);
+    let userid = req.session.user.openid;
     const bindvars = {
         relation: data.relation,
         account: data.account,
@@ -660,7 +663,7 @@ router.post('/add_reimburse', (req, res) => {
         telphone: data.telphone,
         idcard: data.idcard,
         psn_seq: data.psnseq,
-        user_id: req.session.userid,
+        user_id: userid,
         handleidcard: data.handleIdcardImg,
         inpatientInvoice: data.inpatientInvoiceImg,// 标识不可空
         inpatientInvoice2: data.inpatientInvoiceImg2.url, // 标识可以为空
@@ -1082,8 +1085,11 @@ router.get('/editreimburse', (req, res) => {
 });
 
 router.get('/userinfo', (req, res) => {
-    let userid = req.session.userid;
-    // console.log(userid);
+
+    // user.openid
+    // redirect: '/requestWxAuth?comeFromRouter=/home'
+
+    let userid = req.session.user.openid;
     db.execute(
         `select p.psn_name,p.idcard,p.cell_call
             from WX_USER t,NBSSS.DNR_PERSON@dl_nbsss p
@@ -1099,7 +1105,14 @@ router.get('/userinfo', (req, res) => {
 });
 
 router.get('/userinfo-h', (req, res) => {
-    let userid = req.session.userid;
+    // console.log(req.session.user)
+    if(req.session.user == undefined) {
+        res.send({
+            userinfo: false
+        })
+        return;
+    }
+    let userid = req.session.user.openid;
     db.execute(
         `select p.psn_name,p.idcard,p.cell_call,t.img_path
             from WX_USER t,NBSSS.DNR_PERSON@dl_nbsss p

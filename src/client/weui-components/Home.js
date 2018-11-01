@@ -66,6 +66,36 @@ class Home extends React.Component {
             label: '登录',
             href: 'javascript:;',
             onClick: this.clickHander.bind(this,'/login')
+        },
+        {
+            icon: <img src={iconMyReinburse} />,
+            label: '我的报销',
+            href: 'javascript:;',
+            onClick: this.clickHander.bind(this,'/my/reimburse')
+        },
+        {
+            icon: <img src={iconMyReinburse} />,
+            label: '献血预约',
+            href: 'javascript:;',
+            onClick: this.clickHander.bind(this,'/locationNavigation')
+        },
+        {
+            icon: <img src={iconMyReinburse} />,
+            label: '查找献血点',
+            href: 'javascript:;',
+            onClick: this.clickHander.bind(this,'/locationNavigation')
+        },
+        {
+            icon: <img src={iconMyReinburse} />,
+            label: '检测结果',
+            href: 'javascript:;',
+            onClick: this.clickHander.bind(this,'/testResult')
+        },
+        {
+            icon: <img src={iconMyReinburse} />,
+            label: '献血记录',
+            href: 'javascript:;',
+            onClick: this.clickHander.bind(this,'/myAppointRecord')
         }
     ]
 
@@ -84,6 +114,12 @@ class Home extends React.Component {
             }
         ).then(res => res.json())
          .then(json => {
+             // console.log(json);
+             if(!json.userinfo) {
+                 // console.log('/requestWxAuth?comeFromRouter=/home');
+                 this.props.history.push('/requestWxAuth?comeFromRouter=/home');
+                 return;
+             }
              this.setState({userinfo: json.userinfo});
          })
     }

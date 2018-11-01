@@ -55,7 +55,7 @@ app.use(bodyParser.xml({
 
 app.use('*',(req,res,next) => {
     if(req.session.userid == null) {
-        req.session.userid = 'o4loR1XR4EhJCTs4GyRKGOOgVY9A';
+        // req.session.userid = 'o4loR1XR4EhJCTs4GyRKGOOgVY9A';
     }
     next();
 });
