@@ -15,7 +15,7 @@ var donRecord = require('./donRecord/donRecordController');
 var adminMedia = require('./admin/mediaPushController');
 var donorAuth = require('./user/donorAuth');
 var sysSetting  = require('./admin/sysSettingController');
-var adminLogin = require("./admin/adminLoginController")
+// var adminLogin = require("./admin/adminLoginController")
 /*志愿者*/
 var passport = require('passport');
 var loginwx = require('./routes/loginwx');
@@ -139,7 +139,7 @@ app.use("/private/donor",donorAuth);
 //系统设置
 app.use("/public/admin/locationSet",sysSetting);
 //管理员用户管理
-app.use("/public/admin/login",adminLogin);
+// app.use("/public/admin/login",adminLogin);
 
 
 app.listen(8080,() => console.log('Listening on port 8080.'));

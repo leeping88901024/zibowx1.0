@@ -45,11 +45,13 @@ import UpdatePeriod from '../weui-components/Volunteer/UpdatePeriod';
 import { LocaleProvider } from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
-import Register from '../weui-components/Register';
 import TestHome2 from '../weui-components/Volunteer/TestHome2';
+import TestHome3 from '../weui-components/Volunteer/TestHome3';
+import User from '../weui-components/LocalUser/User';
+
 
 import {LoadMore} from "react-weui";
-import AdminLogin from '../weui-components/admin/admin_login'
+// import AdminLogin from '../weui-components/admin/admin_login'
 import MyProgress from '../weui-components/Reimburse/MyProgress';
 class WeuiRoute extends React.Component {
     render() {
@@ -79,7 +81,7 @@ class WeuiRoute extends React.Component {
                     <Route path="/admin_perMaterialsList" component={AdminPerMaterialsList} ></Route>
                     <Route path="/admin_locationSetting" component={AdminLocationSetting} ></Route>
                     <Route path="/admin_locationList" component={AdminLocationList} ></Route>
-                    <Route path="/admin_login" component={AdminLogin} ></Route>
+                    {/* <Route path="/admin_login" component={AdminLogin} ></Route> */}
 
                     {/*志愿者*/}
                     <Route path='/updateperiod' render={
@@ -89,8 +91,10 @@ class WeuiRoute extends React.Component {
                             </LocaleProvider>
                         )
                     } />
+                    <Route path='/localusers' component={ User } />
                     <Route path='/my/reimburseprogress' component={ MyProgress } />
                     <Route path='/testhome2' component={ TestHome2 } />
+                    <Route path='/testhome3' component={ TestHome3 } />
                     <Route path='/reimburseform/:psnseq' component={ ReimburseForm } />
                     <Route path='/reimburseedit/:form_id' component={ EditReimburse } />
                     <Route path='/home' component={ Home } />
@@ -116,7 +120,6 @@ class WeuiRoute extends React.Component {
                         <Redirect to='/home' />
                     )} />
                     <Route exact path='/locations' component={Locations} />
-                    <Route path='/localuser/register' component={ Register } />
                 </switch>
             </Router>
         )

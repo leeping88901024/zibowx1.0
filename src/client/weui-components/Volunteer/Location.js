@@ -72,11 +72,12 @@ class Location extends React.Component {
          });
     }
 
-    clickHander(url) {
-            if(this.state.reserv_period == null) {
-                console.log('please compelete the form');
-                return;
-            }
+    clickHander(url,e) {
+        console.log(e.target.name)
+        if(this.state.reserv_period == null && e.target.name == 'rsv') {
+            console.log('please compelete the form');
+            return;
+        }
         this.props.history.push(url);
     }
 
@@ -87,7 +88,7 @@ class Location extends React.Component {
                         {x[2].substr(0,4)}年
                     </CellHeader>
                     <CellBody>
-                        {`${x[2].substr(5,14)}~${x[3].substr(5,14)}`}
+                        <strong>{`${x[2].substr(5,14)} ~ ${x[3].substr(5,14)}`}</strong>
                         <Badge preset="body" >{`${x[4]}`}</Badge>
                     </CellBody>
                     <CellFooter>
@@ -118,10 +119,12 @@ class Location extends React.Component {
                             <PreviewFooter>
                                 <PreviewButton
                                 primary
+                                name='nvgt'
                                 onClick={this.clickHander.bind(this,`/nvgtt/${this.state.location_id}`)}
                                 >
                                 导航</PreviewButton>
                                 <PreviewButton
+                                name='rsv'
                                 onClick={this.clickHander.bind(this,`/volunteer/reservation/${this.state.location_id}/${this.state.reserv_period}`)} 
                                 primary>预约</PreviewButton>
                             </PreviewFooter>

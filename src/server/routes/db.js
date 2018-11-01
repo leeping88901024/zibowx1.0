@@ -354,6 +354,21 @@ router.get('/query_period', (req, res) => {
     )
 });
 
+router.get('/query_localusers', (req, res) => {
+    db.execute(
+        `select t.id,t.mail,t.mobile 
+        from WX_USER_LOCAL t
+        order by t.id`,
+        (err,result) => {
+            res.send(
+                {
+                    rows: result.rows
+                }
+            );
+        }
+    )
+});
+
 router.post('/examination/answers', (req, res) => {
     let question_id = req.query.question_id;
     db.execute(
@@ -697,6 +712,7 @@ router.post('/add_reimburse', (req, res) => {
 
 router.post('/add_period', (req, res) => {
     const data = req.body;
+    console.log(data);
     const userid = req.session.passport.user;
     const localstart = getAbsTime(data.start);
     const localend = getAbsTime(data.end);
@@ -850,7 +866,7 @@ router.get('/editreimburse', (req, res) => {
             var c_idcardimg1url = '';
             var idcardimg1url = result.rows[0][7];
             if (idcardimg1url === null) { console.log("BLOB was NULL"); }
-            idcardimg1url.setEncoding('utf8');
+            // idcardimg1url.setEncoding('utf8');
             idcardimg1url.on(
                 'end',
                 () => {

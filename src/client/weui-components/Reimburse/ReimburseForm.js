@@ -136,20 +136,20 @@ class ReimburseForm extends React.Component {
         // 1.身份证照正面
         if (this.state.idcardImg1.length != 1) {
             // 用户图片为空
-            this.setState({show_content: <div><font size="3" color="red">请您上传身份证正面（一张）</font></div>});
+            this.setState({show_content: <div><font size="3" color="red">请上传身份证正面（一张）</font></div>});
             this.setState({show_null: true});
             return;
         }
 
         if (this.state.idcardImg2.length != 1) {
-            this.setState({show_content: <div><font size="3" color="red">请您上传身份证反面（一张）</font></div>});
+            this.setState({show_content: <div><font size="3" color="red">请上传身份证反面（一张）</font></div>});
             this.setState({show_null: true});
             return;
         }
 
         // 2.手持身份证
         if (this.state.handleIdcardImg.length != 1) {
-            this.setState({show_content: <div><font size="3" color="red">请您上传[手持]身份证照（一张）</font></div>});
+            this.setState({show_content: <div><font size="3" color="red">请上传[手持]身份证照（一张）</font></div>});
             this.setState({show_null: true});
             return;
         }
@@ -157,7 +157,7 @@ class ReimburseForm extends React.Component {
         // 3.住院发票 多张
         let ipimglength = this.state.inpatientInvoiceImg.length;
         if ((ipimglength < 1) || (ipimglength > 4)) {
-            this.setState({show_content: <div><font size="3" color="red">请您上传住院发票（至少一张，至多4张）</font></div>});
+            this.setState({show_content: <div><font size="3" color="red">请上传住院发票（至少一张，至多4张）</font></div>});
             this.setState({show_null: true});
             return;
         }
@@ -165,7 +165,7 @@ class ReimburseForm extends React.Component {
         // 4.用血明细 多张
         let bdimglength = this.state.blooddetailImg.length;
         if ((bdimglength < 1) || (bdimglength > 4)) {
-            this.setState({show_content: <div><font size="3" color="red">请您上传用血明细（至少1张，至多4张）</font></div>});
+            this.setState({show_content: <div><font size="3" color="red">请上传用血明细（至少1张，至多4张）</font></div>});
             this.setState({show_null: true});
             return;
         }
@@ -175,7 +175,7 @@ class ReimburseForm extends React.Component {
         if(this.state.values.relation != 1) {
             let primglength = this.state.proofofrelationImg.length;
             if ((primglength < 1) || (primglength > 4)) {
-                this.setState({show_content: <div><font size="3" color="red">请您上传【献血者与用血者关系】证明</font></div>});
+                this.setState({show_content: <div><font size="3" color="red">请上传亲属证明材料</font></div>});
                 this.setState({show_null: true});
                 return;
             }
@@ -201,19 +201,19 @@ class ReimburseForm extends React.Component {
                         console.log('iiiii')
                         break;
                     case 'account':
-                        content_null = <div><font size="3" color="red">请您填写开户人。</font></div>;
+                        content_null = <div><font size="3" color="red">请填写开户人。</font></div>;
                         break;
                     case 'bankaccount':
-                        content_null = <div><font size="3" color="red">请您填写银行卡号。</font></div>;
+                        content_null = <div><font size="3" color="red">请填写银行卡号。</font></div>;
                         break;
                     case 'bankname':
-                        content_null = <div><font size="3" color="red">请您填写开户行名称-如:如交通银行</font></div>;
+                        content_null = <div><font size="3" color="red">请填写开户行名称-如:如交通银行</font></div>;
                         break;
                     case 'branchname':
-                        content_null = <div><font size="3" color="red">请您填写支行名称-如:世纪城支行</font></div>;
+                        content_null = <div><font size="3" color="red">请填写支行名称-如:世纪城支行</font></div>;
                         break;
                     case 'city':
-                        content_null = <div><font size="3" color="red">请您选择开户行省市。</font></div>;
+                        content_null = <div><font size="3" color="red">请选择开户行省市。</font></div>;
                         break;
                     case 'bloodusername':
                         content_null = <div><font size="3" color="red">非本人请填写用血者姓名。</font></div>;
@@ -417,7 +417,7 @@ class ReimburseForm extends React.Component {
                             <Cell style={{display: this.state.values.relation != 1 ? null : 'none'}}>
                                 <CellBody>
                                     <Uploader
-                                        title="指定关系证明"
+                                        title="亲属证明材料"
                                         files={this.state.proofofrelationImg}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {

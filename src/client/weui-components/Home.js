@@ -8,7 +8,7 @@ import IconUser from '../img/user.png';
 import IconApply from '../img/apply.png';
 import IconExamination from '../img/examination.png';
 import IconReservationServce from '../img/reservation_services.png';
-import IconReservationDonation from '../img/reservation_donation.png';
+import iconMyReinburse from '../img/myreinburse.png';
 import iconApply from '../img/apply.png';
 import iconReserv from '../img/reservation_services.png';
 import iconReaction from '../img/reaction.png';
@@ -56,7 +56,7 @@ class Home extends React.Component {
             onClick: this.clickHander.bind(this,'/learntoknow')
         },
         {
-            icon: <img src={iconReimburse} />,
+            icon: <img src={iconMyReinburse} />,
             label: '我的报销',
             href: 'javascript:;',
             onClick: this.clickHander.bind(this,'/my/reimburse')

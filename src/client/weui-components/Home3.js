@@ -1,18 +1,17 @@
 import React from 'react';
 import { Layout, Menu, Icon, Dropdown, Avatar } from 'antd';
-import { withRouter } from 'react-router-dom';
+ import { withRouter } from 'react-router-dom';
 import styles from './RightContent.less';
 import headerstyles from './Header.css';
 
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
-class Home2 extends React.Component {
+class Home3 extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-        collapsed: true,
-        userinfo: []
+        collapsed: true
       };
       this.handleMenuClick = this.handleMenuClick.bind(this);
   }
@@ -20,27 +19,6 @@ class Home2 extends React.Component {
   onCollapse = (collapsed) => {
     console.log(collapsed);
     this.setState({ collapsed });
-  }
-
-  componentDidMount() {
-    //this.setState({username: '1179320194@qq.com'})
-    fetch(
-      '/db/userinfo_local',
-      {
-        method: 'get',
-        headers: {
-          accept: 'application/json'
-        }
-      }
-    ).then(res => res.json())
-     .then(json => {
-       //console.log(json);
-       if(json.message.id) {
-         this.setState({userinfo: json.message.content});
-       } else {
-         this.props.history.push(json.message.content);
-       }
-     });
   }
 
   toggle = () => {
@@ -58,35 +36,13 @@ class Home2 extends React.Component {
   }
 
   handleLogout() {
-    // console.log('you will logout....');
-    fetch(
-        '/loginlocal/logout',
-        {
-            method: 'get',
-            headers: {
-                accept: 'application/json'
-            }
-        }
-    ).then(res => res.json())
-     .then(json => {
-         // console.log(json);
-         this.props.history.push(json.redirect);
-     })
+    console.log('you will logout ')
+    this.props.history.push('/login');
 }
 
   render() {
     const menu = (
       <Menu className={styles.menu}  selectedKeys={[]} onClick={this.handleMenuClick}>
-        {/*
-        <Menu.Item key="userCenter">
-          <Icon type="user" />
-          个人信息
-        </Menu.Item>
-        <Menu.Item key="userinfo">
-          <Icon type="setting" />
-          设置
-        </Menu.Item>
-        */}
         <Menu.Divider />
         <Menu.Item key="logout">
           <Icon type="logout" />
@@ -106,21 +62,13 @@ class Home2 extends React.Component {
         >
           <div className="logo" />
           <Menu theme="light" mode="inline" defaultSelectedKeys={['1']} onClick={this.handleMenuClick}>
-            <Menu.Item key="/testhome2">
+            <Menu.Item key="/testhome3">
                 <Icon type="file" />
                 <span>主页</span>
             </Menu.Item>
-            <SubMenu key="sub3" title={<span><Icon type="team" /><span>志愿者</span></span>}>
-                <Menu.Item key="/updateperiod">预约服务人数</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub4" title={<span><Icon type="file" /><span>微信文章</span></span>}>
-                <Menu.Item key="/admin_articlesList">微信文章列表</Menu.Item>
-                <Menu.Item key="/admin_uploadMaterial">新建微信文章</Menu.Item>
-                <Menu.Item key="/admin_wxArticlesLook">预览</Menu.Item>
-                <Menu.Item key="/admin_perMaterialsList">素材列表</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub5" title={<span><Icon type="file" /><span>采血点</span></span>}>
-                <Menu.Item key="/admin_locationList">采血点列表</Menu.Item>
+            <SubMenu key="sub33" title={<span><Icon type="team" /><span>管理</span></span>}>
+                <Menu.Item key="/localusers">用户</Menu.Item>
+                
             </SubMenu>
           </Menu>
         </Sider>
@@ -173,7 +121,7 @@ class Home2 extends React.Component {
                         verticalAlign: 'center',
                         transition: 'all 0.3s, padding 0s',
                         padding: '10px 14px 0 0',
-                      }}>{this.state.userinfo[1]}</span>
+                      }}>admin</span>
                     </span>
                   </Dropdown>
                 ) : (
@@ -191,4 +139,4 @@ class Home2 extends React.Component {
   }
 }
 
-export default withRouter(Home2);
+export default withRouter(Home3);

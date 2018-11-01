@@ -379,7 +379,7 @@ class Apply extends React.Component {
                             type="string" 
                             onChange={this.handleInputChange}
                             onBlur={this.handleVerifyName}
-                            placeholder="请输入您的姓名"/>
+                            placeholder="请输入姓名"/>
                       </CellBody>
                   </FormCell>
                   <FormCell>
@@ -393,7 +393,7 @@ class Apply extends React.Component {
                             type="number" 
                             onChange={this.handleInputChange}
                             onBlur={this.handleVerifyIdcard}
-                            placeholder="请输入您的身份证号#"/>
+                            placeholder="请输入身份证号#"/>
                       </CellBody>
                   </FormCell>
                   <FormCell>
@@ -406,7 +406,7 @@ class Apply extends React.Component {
                             value={this.state.values.company} 
                             type="string" 
                             onChange={this.handleInputChange}
-                            placeholder="请输入您的工作单位"/>
+                            placeholder="请输入工作单位"/>
                       </CellBody>
                   </FormCell>
                   <FormCell select selectPos="after">
@@ -486,7 +486,7 @@ class Apply extends React.Component {
                             type="tel" 
                             onChange={this.handleInputChange}
                             onBlur={this.handleVerifyTel}
-                            placeholder="请输入您的电话号码#"/>
+                            placeholder="请输入手机号码#"/>
                       </CellBody>
                   </FormCell>
                   <FormCell>
@@ -500,7 +500,7 @@ class Apply extends React.Component {
                             type="string" 
                             onChange={this.handleInputChange}
                             onBlur={this.handleVerifyEmail}
-                            placeholder="请输入您的邮件地址"/>
+                            placeholder="请输入邮件地址"/>
                       </CellBody>
                   </FormCell>
                   <FormCell>
@@ -513,7 +513,7 @@ class Apply extends React.Component {
                             value={this.state.values.address} 
                             type="string"
                             onChange={this.handleInputChange}
-                            placeholder="请输入您的地址"/>
+                            placeholder="请输入地址"/>
                       </CellBody>
                   </FormCell>
                   <FormCell>

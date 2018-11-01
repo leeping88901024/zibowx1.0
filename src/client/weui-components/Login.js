@@ -52,7 +52,7 @@ class Example extends React.Component {
 
         if(userinfo.username == 'admin') {
             if(userinfo.password == '8888') {
-                this.props.history.push('localuser/register');
+                this.props.history.push('/testhome3');
                 return;
             }
             // 提示用户密码不正确

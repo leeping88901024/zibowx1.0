@@ -172,13 +172,13 @@ class PeriodEditModel extends React.Component {
                    >
                        {
                           getFieldDecorator('start',{
-                              initialValue: moment(periodstart || new Date(), 'YYYY-MM-DD  HH:mm:ss'),
+                              initialValue: moment(periodstart || new Date(), 'YYYY-MM-DD  HH:mm'),
                           })(<DatePicker
                             name='start'
                             locale={locale}
                             disabledDate={this.disabledStartDate}
                             showTime
-                            format="YYYY-MM-DD HH:mm:ss"
+                            format="YYYY-MM-DD HH:mm"
                             value={startValue}
                             placeholder="预约开始"
                             onChange={this.onStartChange}
@@ -193,13 +193,13 @@ class PeriodEditModel extends React.Component {
                    >
                        {
                           getFieldDecorator('end',{
-                              initialValue: moment(periodend || new Date(), 'YYYY-MM-DD  HH:mm:ss'),
+                              initialValue: moment(periodend || new Date(), 'YYYY-MM-DD  HH:mm'),
                           })(<DatePicker
                             name='end'
                             locale={locale}
                             disabledDate={this.disabledEndDate}
                             showTime
-                            format="YYYY-MM-DD HH:mm:ss"
+                            format="YYYY-MM-DD HH:mm"
                             value={endValue}
                             placeholder="预约结束"
                             onChange={this.onEndChange}

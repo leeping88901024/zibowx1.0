@@ -106,7 +106,7 @@ class Reservation extends React.Component {
                                 <PreviewItem label='采血点' value={`${this.state.location[1]}`} />
                             </PreviewHeader>
                             <PreviewBody>
-                                <PreviewItem label='工作时间' value={`${this.state.location[2]}~${this.state.location[3]}`} />
+                                <PreviewItem label='工作时间' value={`${this.state.location[2]} ~ ${this.state.location[3]}`} />
                                 <PreviewItem label='详细地址' value={`${this.state.location[4]}`} />
                             </PreviewBody>
                         </Preview>
@@ -123,7 +123,7 @@ class Reservation extends React.Component {
                         <CellsTitle><strong>预约时间</strong></CellsTitle>
                         <Preview>
                             <PreviewBody>
-                                <PreviewItem label='时间段' value={`${this.state.periodinfos[2]}-${this.state.periodinfos[3]}`} />
+                                <PreviewItem label='时间段' value={<strong>{this.state.periodinfos[2]} ~ {this.state.periodinfos[3]}</strong>} />
                             </PreviewBody>
                         </Preview>
                         <Form>

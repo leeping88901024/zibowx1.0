@@ -12,8 +12,7 @@ function getAbsTime(time) {
 	      month + '-' +
 	      day + '  ' +
 	      hour + ':' +
-	      min + ':' + 
-	      sec;
+	      min;
 
 	    return  newTime;
 }
