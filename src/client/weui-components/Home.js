@@ -114,10 +114,8 @@ class Home extends React.Component {
             }
         ).then(res => res.json())
          .then(json => {
-             // console.log(json);
              if(!json.userinfo) {
-                 // console.log('/requestWxAuth?comeFromRouter=/home');
-                 this.props.history.push('/requestWxAuth?comeFromRouter=/home');
+                 // this.props.history.push('/requestWxAuth?comeFromRouter=/home');
                  return;
              }
              this.setState({userinfo: json.userinfo});
