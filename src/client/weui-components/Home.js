@@ -15,7 +15,7 @@ import iconReaction from '../img/reaction.png';
 import iconReimburse from '../img/reinburse.png';
 import iconReinburseprogress from '../img/progress.png';
 
-class Home extends React.Component {
+class  Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -108,12 +108,14 @@ class Home extends React.Component {
             '/db/userinfo-h',
             {
                 method: 'get',
+                credentials: "include",
                 headers: {
                     accept: 'application/json'
                 },
             }
         ).then(res => res.json())
          .then(json => {
+             console.log(json.userinfo);
              if(!json.userinfo) {
                  // this.props.history.push('/requestWxAuth?comeFromRouter=/home');
                  return;

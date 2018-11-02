@@ -16,6 +16,7 @@ import {
 } from 'react-weui';
 import 'react-weui/build/packages/react-weui.css';
 import {commonModule} from "../publicModule/publicModule";
+import {Icon, NavBar} from "antd-mobile";
 
 
 
@@ -152,7 +153,6 @@ class Regist extends React.Component {
             return
         }
         //用血者证件号码
-
         if(this.state.certtype == this.state.idcardSeq){
             if(!this.state.idcard || !commonModule.IdentityCodeValid(this.state.idcard)){
                 alert("身份证号码有误");
@@ -217,11 +217,17 @@ class Regist extends React.Component {
     render() {
         return (
             <div>
+                <NavBar
+                    mode="light"
+                    icon={<Icon type="left" />}
+                    leftContent="返回"
+                    onLeftClick={() => {window.location.href= "/home"}}
+                    style={{borderBottom:'1px solid #108ee9'}}
+                >献血者认证</NavBar>
                 <div className="wx_info_show">
-                    <div style={{width:'80px',height:'80px'}}><img style={{width:'100%',height:'100%'}} src={this.state.prof_img_url} /></div>
-                    <div style={{margin:'10px auto'}}>{this.state.nickname}</div>
+                    <div style={{width:'80px',height:'80px',borderRadius:'40px', overflow:'hidden',margin:'4vh auto'}}><img style={{width:'100%',height:'100%'}} src={this.state.prof_img_url} /></div>
+                    <div style={{margin:'10px auto',textAlign:'center'}}>{this.state.nickname}</div>
                 </div>
-                <CellsTitle >献血者认证</CellsTitle>
                 <Form style={{marginTop:'2vh'}}>
                     <FormCell>
                         <CellHeader>

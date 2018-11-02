@@ -94,6 +94,7 @@ class MyReimburse extends React.Component {
         fetch('/db/query_reimburse',
               {
                   method: 'get',
+                  credentials: "include",
                   headers: {
                     accept: 'application/json'
               }

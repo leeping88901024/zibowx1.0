@@ -71,6 +71,7 @@ class MyApply extends React.Component {
         fetch('/db/query_apply',
               {
                   method: 'get',
+                  credentials: "include",
                   headers: {
                     accept: 'application/json'
               }

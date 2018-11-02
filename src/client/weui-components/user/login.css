@@ -2,7 +2,8 @@
 .wx_info_show{
     width: 120px;
     height: 120px;
-    margin:20px auto;
+    margin:10vh auto;
+    textAlign:'center'
 }
 .hint_span{
     display: block;

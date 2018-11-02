@@ -209,6 +209,7 @@ class Apply extends React.Component {
 
        fetch('/db/add_apply',{
         method: 'post',
+        credentials: "include",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(applydata),
       }).then(response => response.json()

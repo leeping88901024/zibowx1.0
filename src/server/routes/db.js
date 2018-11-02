@@ -1105,8 +1105,7 @@ router.get('/userinfo', (req, res) => {
 });
 
 router.get('/userinfo-h', (req, res) => {
-    // console.log(req.session.user)
-    if(req.session.user == undefined) {
+    if(!('user' in req.session)) {
         res.send({
             userinfo: false
         })

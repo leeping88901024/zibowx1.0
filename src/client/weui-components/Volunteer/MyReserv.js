@@ -52,6 +52,7 @@ class MyReserv extends React.Component {
         fetch('/db/query_reserv',
               {
                   method: 'get',
+                  credentials: "include",
                   headers: {
                     accept: 'application/json'
               }

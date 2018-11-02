@@ -46,6 +46,7 @@ class Reservation extends React.Component {
              '/db/userinfo',
              {
                  method: 'get',
+                 credentials: "include",
                  headers: {
                      accept: 'application/json'
                  }
@@ -83,6 +84,7 @@ class Reservation extends React.Component {
 
         fetch('/db/volunteer/add_resv',{
             method: 'post',
+            credentials: "include",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(reservdata),
           }).then(response => response.json()

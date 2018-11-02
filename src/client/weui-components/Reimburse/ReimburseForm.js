@@ -269,6 +269,7 @@ class ReimburseForm extends React.Component {
         // post 存到数据库
         fetch('/db/add_reimburse',{
             method: 'post',
+            credentials: "include",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data2),
           }).then(response => response.json()
