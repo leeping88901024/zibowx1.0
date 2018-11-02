@@ -1173,7 +1173,7 @@ router.get('/userinfo_local', (req, res) => {
         return res.send({
             message: {
                 id: false,
-                content: '/home'
+                content: '/login'
             }
         });
     }
@@ -1181,7 +1181,7 @@ router.get('/userinfo_local', (req, res) => {
         return res.send({
             message: {
                 id: false,
-                content: '/home'
+                content: '/login'
             }
         });
     }

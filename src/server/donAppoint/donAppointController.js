@@ -409,7 +409,6 @@ router.get('/getAppointRecd',(req,res)=>{
  * 加载我的所有预约记录
  */
 router.get('/loadMyAppointRecord',(req,res)=>{
-    //值加载本次预约记录
     var user = req.session.user;
     if(user == null){
         let  resBody = {

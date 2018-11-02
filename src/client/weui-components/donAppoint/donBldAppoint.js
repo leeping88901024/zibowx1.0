@@ -22,6 +22,7 @@ import 'react-weui/build/packages/react-weui.css';
 import './donLocation.css';
 import {commonModule} from "../publicModule/publicModule"
 import config from "../clientConfig";
+import { NavBar, Icon } from 'antd-mobile';
 
 /**
  * 献血征询
@@ -957,10 +958,16 @@ class AppointSucess extends React.Component {
 
     render() {
         return (
-            <div style={{marginTop:'4vh'}}>
-                <h2 style={{display:'block',textAlign:'center'}} >我的预约</h2>
+            <div>
+                <NavBar
+                    mode="light"
+                    icon={<Icon type="left" />}
+                    leftContent="返回"
+                    onLeftClick={() => {window.location.href= "/home"}}
+                    style={{borderBottom:'1px solid #108ee9'}}
+                >我的预约</NavBar>
                 {this.state.appointRecords.map((item,i)=>{
-                    return  <Preview>
+                    return  <Preview  style={{backgroundColor:'#f7f7f7',marginTop:'4vh'}}>
                                 <PreviewHeader>
                                     <PreviewItem label="状态" style={{fontSize:'0.8em'}} value={item.RECRUIT_STATUS_DESC} />
                                 </PreviewHeader>
@@ -1135,10 +1142,16 @@ class MyAppointRecord extends React.Component {
 
     render() {
         return (
-            <div style={{marginTop:'4vh'}}>
-                <h2 style={{display:'block',textAlign:'center'}} >我的预约</h2>
+            <div>
+                <NavBar
+                    mode="light"
+                    icon={<Icon type="left" />}
+                    leftContent="返回"
+                    onLeftClick={() => {window.location.href= "/home"}}
+                    style={{borderBottom:'1px solid #108ee9'}}
+                >我的预约</NavBar>
                 {this.state.appointRecords.map((item,i)=>{
-                    return  (<Preview>
+                    return  (<Preview style={{backgroundColor:'#f7f7f7',marginTop:'4vh'}} >
                         <PreviewHeader>
                             <PreviewItem label="状态" style={{fontSize:'0.8em'}} value={item.RECRUIT_STATUS_DESC} />
                         </PreviewHeader>

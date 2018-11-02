@@ -95,7 +95,7 @@ class  Home extends React.Component {
             icon: <img src={iconMyReinburse} />,
             label: '献血记录',
             href: 'javascript:;',
-            onClick: this.clickHander.bind(this,'/myAppointRecord')
+            onClick: this.clickHander.bind(this,'/donRecord')
         }
     ]
 

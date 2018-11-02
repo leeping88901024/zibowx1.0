@@ -216,7 +216,7 @@ class TestResult extends React.Component{
                         检测结果:&nbsp;&nbsp;&nbsp;{this.state.result == 1 ? '合格' : (this.state.result == 0 ? '不合格' : '未查到数据')}
             </div>
                 <span style={{display:'block',marginTop:'-6vh',marginBottom:'2vh',fontSize:'18px',textAlign:'center'}}> 感谢您的爱心奉献，<br />祝您生活愉快！</span>
-            {/*   <Button type="primary" style={{width:'90%'}} onClick={()=>{this.props.location.history.goBack()}} >返回</Button>*/}
+            <Button type="primary" style={{width:'90%'}} onClick={()=>{window.location.href = "/home"}} >返回</Button>
         </div>);
     }
 }

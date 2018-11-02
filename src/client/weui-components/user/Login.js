@@ -12,7 +12,7 @@ import {
     FormCell,
     Input,
     VCode,
-    Label, CellsTitle, Select
+    Label, CellsTitle, Select, Dialog,Footer,FooterText
 } from 'react-weui';
 import 'react-weui/build/packages/react-weui.css';
 import {commonModule} from "../publicModule/publicModule";
@@ -35,7 +35,36 @@ class Regist extends React.Component {
             spanHintState:false,
             certtype:'',
             certificationTypes:'',
-            idcardSeq:''
+            idcardSeq:'',
+            showAndroid1: false,
+            dialogMes:'',
+            style1: {
+                buttons: [
+                    {
+                        label: 'Ok',
+                        onClick: this.hideDialog.bind(this)
+                    }
+                ]
+            },
+            dialogMes2:'',
+            showAndroid2: false,
+            style2: {
+                title: '您好:',
+                buttons: [
+                    {
+                        type: 'default',
+                        label: '取消',
+                        onClick: this.hideDialog.bind(this)
+                    },
+                    {
+                        type: 'primary',
+                        label: '确定',
+                        onClick: ()=>{
+                            window.location.href = '/requestWxAuth';
+                        }
+                    }
+                ]
+            }
         };
         this.sendCaptcha = this.sendCaptcha.bind(this);
         this.submit = this.submit.bind(this);
@@ -51,17 +80,16 @@ class Regist extends React.Component {
                     window.location.href = 'requestWxAuth';
                 }else{
                     this.setState({
-                        hint:'加载用户信息失败！',
-                        spanHintState:true
+                        showAndroid2: true,
+                        dialogMes2:'加载用户信息失败,是否继续认证?',
                     });
-                    //window.location.href = '/requestWxAuth';;
                 }
             }).catch(function(){
-           this.setState({
-               hint:'加载用户信息失败！',
-               spanHintState:true
-           });
-           window.location.href = '/requestWxAuth';
+                this.setState({
+                    showAndroid2: true,
+                    dialogMes2:'加载用户信息失败,是否继续认证?',
+                });
+
         });
         //加载证件类型
         fetch('/public/donAppoint/loadCertTypes',
@@ -91,7 +119,10 @@ class Regist extends React.Component {
                         certificationTypes: certsArray
                     });
                 }else{
-                    alert(responseJson.message);
+                    this.setState({
+                        showAndroid1: true,
+                        dialogMes:responseJson.message,
+                    });
                 }
             }).catch(function(error){
             console.log(error)
@@ -103,7 +134,10 @@ class Regist extends React.Component {
         //献血者手机号码
         var tellReg = /^[1][3,4,5,7,8][0-9]{9}$/;
         if (!tellReg.test(this.state.tell)) {
-            alert("请输入有效的手机号码");
+            this.setState({
+                showAndroid1: true,
+                dialogMes:'请输入有效的手机号码',
+            });
             return
         }
         //倒计时
@@ -132,9 +166,10 @@ class Regist extends React.Component {
                 }else{
                     console.log("验证码发送失败！");
                     this.setState({
-                        hint:'验证码发送失败！',
-                        spanHintState:true
+                        showAndroid1: true,
+                        dialogMes:'验证码发送失败！',
                     });
+                    return
                     clearInterval(clocker);
                     this.setState({sendCaprButVal:"获取验证码",
                         isDisabled:!this.state.isDisabled
@@ -149,35 +184,46 @@ class Regist extends React.Component {
     submit = () =>{
         var regName = /^[\u4e00-\u9fa5]{2,4}$/;
         if (!this.state.name || !regName.test(this.state.name)) {
-            alert('请输入和证件一致的姓名');
+            this.setState({
+                showAndroid1: true,
+                dialogMes:'请输入和证件一致的姓名！',
+            });
             return
         }
         //用血者证件号码
         if(this.state.certtype == this.state.idcardSeq){
             if(!this.state.idcard || !commonModule.IdentityCodeValid(this.state.idcard)){
-                alert("身份证号码有误");
+                this.setState({
+                    showAndroid1: true,
+                    dialogMes:'身份证号码有误',
+                });
                 return
-            }else{
-
             }
         }else{
             if(!this.state.idcard ){
-               alert("证件号码不能为空");
+                this.setState({
+                    showAndroid1: true,
+                    dialogMes:'证件号码不能为空',
+                });
                 return
-            }else{
-
             }
         }
 
         //献血者手机号码
         var tellReg = /^[1][3,4,5,7,8][0-9]{9}$/;
         if (!tellReg.test(this.state.tell)) {
-            alert("请输入正确的手机号码");
+            this.setState({
+                showAndroid1: true,
+                dialogMes:'请输入正确的手机号码',
+            });
             return
         }
         //验证码
         if(!this.state.captcha){
-            alert('请输入验证码');
+            this.setState({
+                showAndroid1: true,
+                dialogMes:'请输入验证码',
+            });
             return
         }
 
@@ -214,9 +260,23 @@ class Regist extends React.Component {
     }
 
 
+    hideDialog() {
+        this.setState({
+            showAndroid1: false,
+            showAndroid2: false,
+        });
+    }
+
+
     render() {
         return (
             <div>
+                <Dialog type="android" title={this.state.style1.title} buttons={this.state.style1.buttons} show={this.state.showAndroid1}>
+                    {this.state.dialogMes}
+                </Dialog>
+                <Dialog type="android" title={this.state.style2.title} buttons={this.state.style2.buttons} show={this.state.showAndroid2}>
+                    {this.state.dialogMes2}
+                </Dialog>
                 <NavBar
                     mode="light"
                     icon={<Icon type="left" />}
@@ -226,7 +286,7 @@ class Regist extends React.Component {
                 >献血者认证</NavBar>
                 <div className="wx_info_show">
                     <div style={{width:'80px',height:'80px',borderRadius:'40px', overflow:'hidden',margin:'4vh auto'}}><img style={{width:'100%',height:'100%'}} src={this.state.prof_img_url} /></div>
-                    <div style={{margin:'10px auto',textAlign:'center'}}>{this.state.nickname}</div>
+                    <div style={{margin:'10px auto',textAlign:'center',fontSize:'16px'}}>{this.state.nickname}</div>
                 </div>
                 <Form style={{marginTop:'2vh'}}>
                     <FormCell>
@@ -287,6 +347,10 @@ class Regist extends React.Component {
                 </Form>
                 <Button style={{marginTop:'2vh'}} onClick={this.submit} >认证</Button>
                 {this.state.spanHintState === false ? <div></div> :   <CellsTitle style={{color:'crimson'}} >{this.state.hint}</CellsTitle>}
+                <Footer>
+                    <FooterText style={{marginTop:'2vh'}}>温馨提示:献血者认证即将微信信息与献血信息关联，关联后不可更改！</FooterText>
+                </Footer>
+
             </div>
         )
     }
