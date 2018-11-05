@@ -63,6 +63,7 @@ class DonBldConsult extends React.Component {
                     }
                 ]
             },
+            nextAbled : ''
         }
         this.onNameChange =this.onNameChange.bind(this);
         this.onIdcardChange = this.onIdcardChange.bind(this);
@@ -110,7 +111,8 @@ class DonBldConsult extends React.Component {
                         label: '机采'
                     }
                 ],
-                donType: 0
+                donType: 0,
+                nextAbled : true
             });
         }
 
@@ -277,24 +279,30 @@ class DonBldConsult extends React.Component {
             }
         }
 
-       if(!this.state.appointDate){
-           this.setState({
-               showAndroid1: true,
-               dialogMes:'请选择预约日期',
-           });
-           return
-       }else{
-           var str = this.state.appointDate.replace(/-/g, '/'); // "2010/08/01";
-           // 创建日期对象
-           var date = new Date(str);
-           if(date < new Date()){
-               this.setState({
-                   showAndroid1: true,
-                   dialogMes:'预约日期必须在今天以后',
-               });
-               return
-           }
-       }
+        if(!this.state.appointDate){
+            this.setState({
+                showAndroid1: true,
+                dialogMes:'请选择预约日期',
+            });
+            return
+        }else{
+            var str = this.state.appointDate.replace(/-/g, '/'); // "2010/08/01";
+            // 创建日期对象
+            var date = new Date(str);
+            if(date < new Date()){
+                this.setState({
+                    showAndroid1: true,
+                    dialogMes:'预约日期必须在今天以后',
+                });
+                return
+            }
+        }
+
+        //禁用按钮
+        this.setState({
+            nextAbled : !this.state.nextAbled
+        })
+
         //封装参数
         var data = {
             //姓名
@@ -317,23 +325,30 @@ class DonBldConsult extends React.Component {
             .then((responseJson) => {
                 if(responseJson.status === 200){
                     //跳转到详细信息
-                   if(this.state.idcardSeq == this.state.certtype){
-                       window.location.href = '/donBldDetailInfo?idcard='+this.state.idcard+"&don_type="+this.state.donType;
-                   }else {
-                       window.location.href = '/donBldDetailInfo?don_type='+this.state.donType;
-                   }
+                    if(this.state.idcardSeq == this.state.certtype){
+                        window.location.href = '/donBldDetailInfo?idcard='+this.state.idcard+"&don_type="+this.state.donType;
+                    }else {
+                        window.location.href = '/donBldDetailInfo?don_type='+this.state.donType;
+                    }
                 }else{
+                    //启用按钮
+                    this.setState({
+                        nextAbled : !this.state.nextAbled
+                    })
+
                     this.setState({
                         showAndroid1: true,
                         dialogMes:responseJson.message,
                     });
                 }
             }).catch(function(error){
+            //启用按钮
+            this.setState({
+                nextAbled : !this.state.nextAbled
+            })
             console.log(error)
         })
     }
-
-
 
     render() {
         return (
@@ -343,8 +358,8 @@ class DonBldConsult extends React.Component {
                 </Dialog>
                 <div style={{display:'block',margin:'4vh auto', textAlign: 'center'}}><h1 style={{color:'green',display:'inline'}} >献血征询</h1></div>
                 <Form>
-                <FormCell>
-                         <CellHeader>
+                    <FormCell>
+                        <CellHeader>
                             <Label>姓名</Label>
                         </CellHeader>
                         <CellBody>
@@ -394,7 +409,7 @@ class DonBldConsult extends React.Component {
                         </CellBody>
                     </FormCell>
                 </Form>
-                <Button style={{marginTop:'4vh'}} onClick={this.submit} >下一步</Button>
+                <Button style={{marginTop:'4vh'}} disabled={this.state.nextAbled} onClick={this.submit} >下一步</Button>
                 <span style={{marginTop:'4vh',marginLeft:'2vw',fontSize:'14px',color:'green'}}>*温馨提示:某些地点只能预约全血</span><br/>
             </div>
         )
@@ -409,8 +424,8 @@ class DonBldDetailInfo extends React.Component {
         this.state = {
             sexArray:[
                 {
-                  value:'',
-                  label:'--选择--'
+                    value:'',
+                    label:'--选择--'
                 },
                 {
                     value:0,
@@ -481,6 +496,7 @@ class DonBldDetailInfo extends React.Component {
                     }
                 ]
             },
+            subAbled : ''
         }
     }
     componentDidMount(){
@@ -491,7 +507,7 @@ class DonBldDetailInfo extends React.Component {
         var donType = searchParams.get('don_type');
 
         this.setState({
-           donType:donType
+            donType:donType
         });
 
         if(id_card != null){
@@ -532,12 +548,12 @@ class DonBldDetailInfo extends React.Component {
                         //学历
                         if(i == 0){
                             let eduArray = new Array(this.state.educationArray);
-                               item.map((eduArr,j)=>{
-                                   eduArray.push({
-                                       value:JSON.parse(eduArr).EDUCATION_SEQ,
-                                       label:JSON.parse(eduArr).EDUCATION_NAME
-                                   });
-                               })
+                            item.map((eduArr,j)=>{
+                                eduArray.push({
+                                    value:JSON.parse(eduArr).EDUCATION_SEQ,
+                                    label:JSON.parse(eduArr).EDUCATION_NAME
+                                });
+                            })
                             this.setState({
                                 educationArray :eduArray
                             });
@@ -668,17 +684,21 @@ class DonBldDetailInfo extends React.Component {
             }
         }
 
-            var str = this.state.birthday.replace(/-/g, '/'); // "2010/08/01";
-            // 创建日期对象
-            var date = new Date(str);
-            if(date > new Date()){
-                this.setState({
-                    showAndroid1: true,
-                    dialogMes:'生日必须小于今天',
-                });
-                return
-            }
+        var str = this.state.birthday.replace(/-/g, '/'); // "2010/08/01";
+        // 创建日期对象
+        var date = new Date(str);
+        if(date > new Date()){
+            this.setState({
+                showAndroid1: true,
+                dialogMes:'生日必须小于今天',
+            });
+            return
+        }
 
+        //禁用按钮
+        this.setState({
+            subAbled : !this.state.subAbled
+        })
         //封装参数
         var data = {
             tell:this.state.tell,
@@ -704,12 +724,20 @@ class DonBldDetailInfo extends React.Component {
                 }else if(responseJson.status == 10014){
                     window.location.href = "/locationNavigation";
                 } else{
+                    //启用按钮
+                    this.setState({
+                        subAbled : !this.state.subAbled
+                    })
                     this.setState({
                         showAndroid1: true,
                         dialogMes:responseJson.message,
                     });
                 }
             }).catch(function(error){
+            //启用按钮
+            this.setState({
+                subAbled : !this.state.subAbled
+            })
             console.log(error)
         })
     }
@@ -804,7 +832,7 @@ class DonBldDetailInfo extends React.Component {
                         </CellBody>
                     </FormCell>
                 </Form>
-                <Button style={{marginTop:'4vh'}} onClick={this.submit} >下一步</Button>
+                <Button style={{marginTop:'4vh'}} disabled={this.state.subAbled} onClick={this.submit} >下一步</Button>
             </div>
         )
     }

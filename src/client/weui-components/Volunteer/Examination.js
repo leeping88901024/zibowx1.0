@@ -58,6 +58,23 @@ class Examination extends React.Component {
    }
    handleResultDialogClick() {
     this.setState({ resultshow: false });
+    // 计算分数的算法待定
+    // 假如现已经有分数，则，最简单的即为更具分数更新用户表，标识用户以及通过献血者的考试
+    console.log('sarting fetch ...')
+    if (this.state.score > 60) {
+        fetch(
+            '/db/updtusrv',
+            {
+                method: 'get'
+            }
+        ).then(res => res.json())
+            .then(json => {
+            console.log(json.message);
+            this.props.history.push('/home')
+            });
+    }
+    // 提示用户没有通过考试
+
   }
 
    handleClick(e) {
@@ -78,7 +95,7 @@ class Examination extends React.Component {
              score: tmp
          })
      }
-     
+
    }
 
 
@@ -107,7 +124,8 @@ class Examination extends React.Component {
                     <ButtonArea>
                         <Button msg = {this.responseMsg}
                                     onClick={() => {
-                                        this.setState({resultshow : true});
+                                        // 显示所得分数
+                                         this.setState({resultshow : true});
                                     }}>
                                     交卷
                         </Button>
@@ -143,7 +161,9 @@ class Examination extends React.Component {
                         buttons={this.state.resultstyle.buttons} >
                         <div>
                         <Article>
-                        <h1>你考试得分为: {this.state.score} 分</h1>
+                            {this.state.score > 59 ? 
+                            <h1>你考试得分为: {this.state.score} 分,<br /><font color='#48B541'>考试未通过</font></h1>
+                            : <h1>你考试得分为: {this.state.score} 分,<br /><font color='red'>考试未通过</font></h1>}
                         </Article>
                         </div>
                     </Dialog>

@@ -137,8 +137,11 @@ router.get('/relationship', (req, res) => {
 router.post('/add_apply', (req, res) => {
      const data = req.body;
      let userid = req.session.user.openid
-     db.execute(`insert into WX_VOLUNTEER_APPLY(NAME,idcard,phone,email,company,profession,education,nation,abogroup,isdonation,address,ispermanentresidence,residence,profileimg,user_id,create_date,form_state)
-                 values(:NAME,:idcard,:phone,:email,:company,:profession,:education,:nation,:abogroup,:isdonation,:address,:ispermanentresidence,:residence,:profileimg,:user_id,sysdate,:form_state)`,
+     db.execute(`BEGIN 
+                   insert into WX_VOLUNTEER_APPLY(NAME,idcard,phone,email,company,profession,education,nation,abogroup,isdonation,address,ispermanentresidence,residence,profileimg,user_id,create_date,form_state)
+                   values(:NAME,:idcard,:phone,:email,:company,:profession,:education,:nation,:abogroup,:isdonation,:address,:ispermanentresidence,:residence,:profileimg,:user_id,sysdate,:form_state);
+                   update wx_user t set t.volunte_status = 1 where t.openid = :wx_user_id;
+                 END;`,
                 [
                     data.name,
                     data.idcard,
@@ -155,7 +158,8 @@ router.post('/add_apply', (req, res) => {
                     data.residence,
                     data.url,
                     userid,
-                    1 //默认表单状态
+                    1, //默认表单状态
+                    userid
                 ],
                 { autoCommit: true}, 
                 (err,result) =>{
@@ -212,6 +216,8 @@ router.get('/query_apply', (req, res) => {
         }
     )
 });
+
+
 
 router.get('/query_reimburse',(req,res) => {
     let userid = req.session.user.openid;
@@ -515,7 +521,7 @@ router.get('/location/reservation', (req, res) => {
     const location_id = req.query.location_id;
     db.execute(
         `select * from WX_DNR_LOCATION_RESERVATION t
-        where t.location_id = :location_id`,
+        where t.location_id = :location_id for update`,
         [location_id],
         (err,result) => {
             res.send(
@@ -1113,14 +1119,30 @@ router.get('/userinfo-h', (req, res) => {
     }
     let userid = req.session.user.openid;
     db.execute(
-        `select p.psn_name,p.idcard,p.cell_call,t.img_path
-            from WX_USER t,NBSSS.DNR_PERSON@dl_nbsss p
-            where p.psn_seq = t.psn_seq
-            and t.openid = :userid`,
+        `select t.online_name,t.img_path,t.tell,t.volunte_status
+            from WX_USER t
+            where t.openid = :userid`,
         [userid],
         (err,result) => {
             res.send({
                 userinfo: result.rows[0]
+            });
+        }
+    )
+});
+
+router.get('/updtusrv', (req, res) => {
+    // console.log(`you are here ...`)
+    let userid = req.session.user.openid;
+    db.execute(
+        `BEGIN 
+           update wx_user t set t.volunte_status = 2 where t.openid = :userid;
+        END;`,
+        [userid],
+        { autoCommit: true},
+        (err,result) => {
+            res.send({
+                message: 'success'
             });
         }
     )

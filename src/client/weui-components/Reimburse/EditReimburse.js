@@ -462,7 +462,7 @@ class EditReimburse extends React.Component {
                             <Cell style={{display: this.state.values.relation != 1 ? null : 'none'}}>
                                 <CellBody>
                                     <Uploader
-                                        title="指定关系证明"
+                                        title="亲属证明材料"
                                         files={this.state.proofofrelationImg}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {

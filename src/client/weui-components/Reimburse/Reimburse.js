@@ -25,9 +25,9 @@ class Reimburse extends React.Component {
 
             // 提交数据
             values: {
-                name: '李秀英',
-                idcard: '370923197210170948',
-                phone: '15966950949',
+                name: '',
+                idcard: '',
+                phone: '',
             },
 
             // 验证表单对话框
@@ -66,6 +66,26 @@ class Reimburse extends React.Component {
         this.setState({show_null: false})
     }
 
+    componentDidMount() {
+        // 取个人信息
+        fetch(
+            '/db/userinfo',
+            {
+                method: 'get',
+                credentials: "include",
+                headers: {
+                    accept: 'application/json'
+                }
+            }
+        ).then(res => res.json())
+         .then(json => {
+             // console.log(`the user info is ${JSON.stringify(json)}`);
+             this.setItemValue('name', json.userinfo[0]);
+             this.setItemValue('idcard', json.userinfo[1]);
+             this.setItemValue('phone', json.userinfo[2]);
+         });
+    }
+
     
     handleInputChange(e){
         this.setItemValue(e.target.name,e.target.value);
@@ -74,7 +94,7 @@ class Reimburse extends React.Component {
     setItemValue(field,value){
         let _values = Object.assign({},this.state.values,{[field]:value});
         this.setState({values:_values});
-        console.log(this.state.values);
+        // console.log(this.state.values);
     }
 
     //  验证-姓名

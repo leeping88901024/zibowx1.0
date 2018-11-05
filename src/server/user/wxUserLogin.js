@@ -11,6 +11,7 @@ var userdao =  require('./dao/userdao');
  * 从微信服务器获取微信用户信息
  */
 router.get('/getWxUserInfoFromWx',(req,res) => {
+    console.log("cookie："+req.cookies.sessionid);
     var code = req.query.code;
     client.getAccessToken(code,(err,result) => {
         if(result.errcode){
@@ -43,7 +44,6 @@ router.get('/getWxUserInfoFromWx',(req,res) => {
                 psn_seq:'',
                 tell:''
             }
-
             //查询
             userdao.getUserByOpenId(openId).then((result)=> {
                 console.log("我是user:"+result)

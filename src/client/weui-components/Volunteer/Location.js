@@ -15,7 +15,7 @@ class Location extends React.Component {
             reservinfo: [],
             reserv_period: null,
 
-            show: true,
+            show: false,
             style: {
                 title: "提示",
                 buttons: [
@@ -73,9 +73,11 @@ class Location extends React.Component {
     }
 
     clickHander(url,e) {
-        console.log(e.target.name)
+        // console.log(e.target.name)
         if(this.state.reserv_period == null && e.target.name == 'rsv') {
-            console.log('please compelete the form');
+            // console.log('please compelete the form');
+            // 在这里显示对话框
+            this.setState({show: true});
             return;
         }
         this.props.history.push(url);
@@ -135,7 +137,7 @@ class Location extends React.Component {
                         show={this.state.show}
                         buttons={this.state.style.buttons} >
                         <Article>
-                        <div><font  color="red" >请选择预约时间段。</font></div>
+                        <div><font  color="black" >你没有选择选择预约时间段,<br />请选择预约时间段后继续。</font></div>
                         </Article>
                     </Dialog>
                  </Panel>

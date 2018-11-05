@@ -46,11 +46,14 @@ export class AutoLogin extends Component{
             .then((response) => response.json())
             .then((responseJson) => {
                   if(responseJson.status == 200){
-                        //获取localstoreage保存token
-                        window.localStorage.setItem("token",responseJson.token);
+                      //console.log(commonModule.getCookie("comeFromRouter")+"?"+commonModule.getCookie("searchParams"));
+
+                      //获取localstoreage保存token
+                        //window.localStorage.setItem("token",responseJson.token);
                         //跳转到请求的控件
-                      window.location.href = commonModule.getCookie("comeFromRouter")+"?"+commonModule.getCookie("searchParams");
-                    }else{
+                     window.location.href = commonModule.getCookie("comeFromRouter")+"?"+commonModule.getCookie("searchParams");
+
+                  }else{
                       console.log(responseJson.message);
                       if (confirm("微信授权失败，是否重新授权?")) {
                           window.location.href = "/requestWxAuth";

@@ -579,7 +579,8 @@ class ArticlesList extends React.Component {
         data: [],
         list: [],
         //选中的文章
-        checkArticle :[]
+        checkArticle :[],
+        pushDisabled :true
     }
 
     componentDidMount() {
@@ -594,7 +595,20 @@ class ArticlesList extends React.Component {
 
     //推送按钮点击
     pushClickHandle = ()=>{
-
+        //检查是否符合微信推送规则
+        if(this.state.checkArticle.length > 3){
+            alert("最多只可以同时推送3篇微信文章！");
+            return;
+        }
+        //
+        this.setState({
+            pushDisabled : false
+        });
+        setTimeout(()=>{
+            this.setState({
+                pushDisabled : true
+            });
+        },2000);
         let psotData = {
             checkArticle:this.state.checkArticle
         }
@@ -660,6 +674,21 @@ class ArticlesList extends React.Component {
             });
         });
     }
+//删除文章从数据库
+    deleteNews = (id)=>{
+        //删除选中文章
+        fetch("/public/admin/media/deleteNewsFromDb?id="+ id,{credentials: "include"})
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if(responseJson.status === 200){
+                    alert("删除成功！");
+                }else{
+                    alert(responseJson.message);
+                }
+            }).catch(function(error){
+            console.log("删除微信文章失败:"+error)
+        })
+    }
 
     render() {
         const { initLoading, loading, list } = this.state;
@@ -671,8 +700,12 @@ class ArticlesList extends React.Component {
 
         return (
             <div>
-                <div style={{height:'4vh'}}><Button  onClick={this.pushClickHandle} type="primary" style={{width:'10vw',height:'4vh',float:'right'}} >推送</Button></div>
-            <List
+             {/*
+                微信文章提示
+             */}
+            <div   style={{height:'4vh'}}><Button  onClick={()=>{window.location.href = '/admin_uploadMaterial'}} type="primary"  style={{width:'10vw',height:'4vh',float:'right',marginLeft:'2vw'}} >新建</Button><Button  onClick={this.pushClickHandle} type="primary" disabled={!this.state.pushDisabled} style={{width:'10vw',height:'4vh',float:'right'}} >推送</Button></div>
+                <div style={{fontSize:'12px'}}>提示:微信文章每天仅可以推送一次，每次推送不得超过三篇文章，只能有一篇文章显示微封面，否则推送失败！</div>
+                <List
                 className="demo-loadmore-list"
                 style={{marginTop:'4vh',borderTop:'1px solid #e8e8e8'}}
                 loading={initLoading}
@@ -680,7 +713,7 @@ class ArticlesList extends React.Component {
                 loadMore={loadMore}
                 dataSource={list}
                 renderItem={item => (
-                    <List.Item actions={[<a href={"/admin_wxArticlesEdit?id="+ JSON.parse(item).ID}  >编辑</a>, <Checkbox value={JSON.parse(item).ID} onChange={(e)=>{
+                    <List.Item actions={[<a href={"/admin_wxArticlesEdit?id="+ JSON.parse(item).ID}  >编辑</a>,JSON.parse(item).IS_PUSH == 0 ? <a onClick={()=>{this.deleteNews(JSON.parse(item).ID)}} >删除</a> : '删除', <Checkbox value={JSON.parse(item).ID} onChange={(e)=>{
                        console.log(e)
                         var arr = new Array();
                         arr = arr.concat(this.state.checkArticle);
@@ -695,8 +728,8 @@ class ArticlesList extends React.Component {
                         this.setState({
                             checkArticle:arr
                         })
-
-                    }}>选择</Checkbox>]}>
+                    }}>选择</Checkbox>,<div>{JSON.parse(item).IS_PUSH == 1 ? '已推送过' : '还未推送'}</div>,
+                        <div>{"最后修改时间:"+JSON.parse(item).LAST_MODIFY_DATE}</div> ]}>
                         <Skeleton avatar title={false} loading={item.loading} active>
                             <List.Item.Meta
                                 avatar={<Avatar src={JSON.parse(item).THUMB_URL} />}

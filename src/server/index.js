@@ -38,7 +38,7 @@ app.use(session({
 }));
 
 app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session() );
 
 app.use(express.json({limit: '100mb'}));
 app.use(bodyParser.json({limit: '100mb', extended: true}));
@@ -55,7 +55,7 @@ app.use(bodyParser.xml({
 
 app.use('*',(req,res,next) => {
     if(req.session.userid == null) {
-        // req.session.userid = 'o4loR1XR4EhJCTs4GyRKGOOgVY9A';
+            req.session.user = {openid: 'o4loR1f5jHz2b-Fg5xiemyh44sag'};
     }
     next();
 });

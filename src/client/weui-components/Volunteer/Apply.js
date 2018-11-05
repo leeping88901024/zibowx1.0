@@ -18,6 +18,8 @@ class Apply extends React.Component {
             gallery: false,
             profileImg : [],
 
+            gallery: false,
+
             show: true,
             style: {
                 title: "无偿志愿者入队须知",
@@ -34,10 +36,10 @@ class Apply extends React.Component {
               phone: '',
               email: '',
               company: '',
-              profession: '',
-              education: '',
-              nation: '',
-              abogroup: '',
+              profession: 1,
+              education: 1,
+              nation: 1,
+              abogroup: 1,
               isdonation: false,
               address: '',
               //residence: '123',
@@ -148,7 +150,7 @@ class Apply extends React.Component {
           return;
       }
       let applydata = Object.assign({},this.state.values,{residence: this.state.city_value},{url : this.state.profileImg[0].url},{user_id: this.state.user_id},{crete_date: localDate});
-      console.log(applydata);
+       // console.log(applydata);
       let ret = {};
       for(let key in applydata) {
           if (applydata[key].toString() == '') {
@@ -201,7 +203,7 @@ class Apply extends React.Component {
 
       };
       this.clickHander('/volunteer/success');
-      console.log(ret);
+      // console.log(ret);
       
       
       //console.log(this.state.profileImg[0].url);
@@ -329,6 +331,35 @@ class Apply extends React.Component {
         return response.json();
     }
 
+    renderGallery(){
+        if(!this.state.gallery) return false;
+
+        let srcs = this.state.profileImg.map(file=>file.url)
+
+        return (
+            <Gallery
+                src={srcs}
+                show
+                defaultIndex={this.state.gallery.id}
+                onClick={ e=> {
+                    //avoid click background item
+                    e.preventDefault()
+                    e.stopPropagation();
+                    this.setState({gallery: false})
+                }}
+            >
+
+                <GalleryDelete onClick={ (e, id)=> {
+                    this.setState({
+                        profileImg: this.state.profileImg.filter((e,i)=>i != id),
+                        gallery: this.state.profileImg.length <= 1 ? true : false
+                    })
+                }} />
+
+            </Gallery>
+        )
+    }
+
       render() {
         return (
           <div>
@@ -337,6 +368,7 @@ class Apply extends React.Component {
                 {/* <WeForm schema={schema} form={form}/> */}
                 <CellsTitle>个人信息</CellsTitle>
                 <Form>
+                { this.renderGallery() }
                     <Cell>
                         <CellBody>
                             <Uploader

@@ -2,7 +2,7 @@ var rowsData = require('../utils/rowsProcess');
 
 var mediaPushDao = {
     /**
-     * 向数据库插入数据
+     * 向数据库插入图文消息
      * @param articles
      * @returns {Promise<any>}
      */
@@ -22,8 +22,8 @@ var mediaPushDao = {
                 let NEXT_ID = await conn.execute(
                     "SELECT SEQ_WX_MEIDA.NEXTVAL FROM DUAL"
                 );
-                let sql = "INSERT INTO  WX_PIC_TEXT_MEDIA(ID,TITLE,CONTENT,AUTHOR,DIGEST,SHOW_COVER_PIC,THUMB_URL,THUMB_PATH,THUMB_ORIGI_NAME,THUMB_SIZE,THUMB_TYPE,IS_PUSH)  \n" +
-                    "                    VALUES(:ID,:TITLE,:CONTENT,:AUTHOR,:DIGEST,:SHOW_COVER_PIC,:THUMB_URL,:THUMB_PATH,:THUMB_ORIGI_NAME,:THUMB_SIZE,:THUMB_TYPE,:IS_PUSH)";
+                let sql = "INSERT INTO  WX_PIC_TEXT_MEDIA(ID,TITLE,CONTENT,AUTHOR,DIGEST,SHOW_COVER_PIC,THUMB_URL,THUMB_PATH,THUMB_ORIGI_NAME,THUMB_SIZE,THUMB_TYPE,IS_PUSH,CREATE_DATE,LAST_MODIFY_DATE)  \n" +
+                    "                    VALUES(:ID,:TITLE,:CONTENT,:AUTHOR,:DIGEST,:SHOW_COVER_PIC,:THUMB_URL,:THUMB_PATH,:THUMB_ORIGI_NAME,:THUMB_SIZE,:THUMB_TYPE,:IS_PUSH,sysdate,sysdate)";
 
                 //插入文章
                 let result = await conn.execute(sql,
@@ -79,7 +79,11 @@ var mediaPushDao = {
                     "       WXM.AUTHOR,\n" +
                     "       WXM.DIGEST,\n" +
                     "       WXM.THUMB_URL,\n" +
-                    "       WXM.SHOW_COVER_PIC\n" +
+                    "       WXM.SHOW_COVER_PIC,\n" +
+                    "       WXM.IS_PUSH,\n" +
+                    "       WXM.CREATE_DATE,\n" +
+                    "       WXM.IS_PUSH,\n" +
+                    "       TO_CHAR(WXM.LAST_MODIFY_DATE,'yyyy-MM-dd hh24:mi:ss') LAST_MODIFY_DATE\n" +
                     " FROM (SELECT W.* , ROWNUM rn  FROM WX_PIC_TEXT_MEDIA W) WXM WHERE WXM.rn >= "+rownumStart+" and WXM.rn < "+rownumEnd,
                     function (err, result) {
                         if (err) {
@@ -241,7 +245,8 @@ var mediaPushDao = {
                     "                             THUMB_TYPE = :THUMB_TYPE,\n" +
                     "                             THUMB_MEDIA_ID = :THUMB_MEDIA_ID,\n" +
                     "                             ARTICLE_MEDIA_ID = :ARTICLE_MEDIA_ID,\n" +
-                    "                             IS_PUSH = :IS_PUSH\n" +
+                    "                             IS_PUSH = :IS_PUSH,\n" +
+                    "                             LAST_MODIFY_DATE = sysdate\n" +
                     "                      WHERE ID = :ID",
                     [articles.title,articles.content,articles.author,articles.digest,articles.show_cover_pic,articles.showUrl,articles.originalName,articles.thumb_size,articles.thumb_type,articles.thumb_media_id,articles.article_media_id,articles.isPush,articles.id,],
                 );
@@ -254,6 +259,49 @@ var mediaPushDao = {
                     resolve(null)
                 }else{
                     resolve(articles.id);
+                }
+                //返回
+            } catch (err) { // catches errors in getConnection and the query
+                console.log("=="+err)
+                reject(err);
+            } finally {
+                if (conn) {   // the conn assignment worked, must release
+                    try {
+                        await conn.release();
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+        });
+
+    },
+    /**
+     * 从数据库删除微信文章
+     */
+    deleteNews : async (id) => {
+        var oracledb = require('oracledb');
+        return new Promise(async function(resolve, reject) {
+            let conn;
+            try {
+                conn = await oracledb.getConnection({
+                    user          : "zibowx",
+                    password      : "zibowx",
+                    connectString : "192.168.1.51:1521/spda"
+                });
+                //插入文章
+                let result = await conn.execute("DELETE FROM WX_PIC_TEXT_MEDIA WHERE ID = :ID",
+                    [id],
+                );
+                conn.commit((err)=>{
+                    if(err != null){
+                        reject(err);
+                    }
+                });
+                if(false == result){
+                    resolve(null)
+                }else{
+                    resolve(result);
                 }
                 //返回
             } catch (err) { // catches errors in getConnection and the query

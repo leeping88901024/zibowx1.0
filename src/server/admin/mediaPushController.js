@@ -59,17 +59,33 @@ router.post('/wxMedia',(req,res)=>{
         async.waterfall([
             function (callback) {
                 var checkedArticles = req.body.checkArticle;
-                console.log("没错我就是要推送的文章：" + checkedArticles);
+                if(checkedArticles.length == 0){
+                    callback("请至少选择一篇文章")
+                    return
+                }
                 //根据id加载文章
                 mediaPushDao.loadMediaArticlesByIds(checkedArticles).then(async (result) => {
                     if (result != null) {
-                        console.log("执行到这里了吗：" + result);
-                        callback(null, result);
+                        let cover_count = 0;
+                        let for_count = 0;
+                        for(let arcle of result) {
+                            console.log("要保存的文章?"+arcle)
+                            if(JSON.parse(arcle).SHOW_COVER_PIC == 1){
+                                cover_count= cover_count +1
+                            }
+                            for_count = for_count +1;
+                            if(for_count == result.length){
+                                if(cover_count > 1){
+                                    callback("同时推送的文章中只能有一篇显示为封面！")
+                                }else{
+                                    callback(null, result);
+                                }
+                            }
+                        }
                     } else {
                         callback(err)
                     }
                 }).catch((err) => {
-                    console.log("推送微信文章出错，来自mediaPushController:" + err)
                     callback(err)
                 })
             },
@@ -403,6 +419,7 @@ router.post('/updateArticles',(req,res)=>{
 /**
  * 从数据库加载图文素材
  */
+
 router.get("/loalMedia",(req,res)=>{
     //得到参数
     var count = req.query.count;
@@ -442,7 +459,6 @@ router.get("/loadFollowers",(req,res)=>{
 /**
  * 删除图文素材通过mediaid
  */
-
 router.get("/removeMedia",(req,res)=>{
     api.removeMaterial("AvzeSlVi2Y7dTKNs90wAd-7VctxZ3fWGNrT1QemwKbA", (err,result,res)=>{
         if(err){
@@ -457,9 +473,8 @@ router.get("/removeMedia",(req,res)=>{
 /**
  * 预览图文消息
  */
-
 router.get("/previewhMedia",(req,res)=>{
-    api.previewNews("o4loR1XR4EhJCTs4GyRKGOOgVY9A", "AvzeSlVi2Y7dTKNs90wAdxhmfeCXZi-BGe99oGocv54", (err,result)=>{
+    api.previewNews("o4loR1XR4EhJCTs4GyRKGOOgVY9A", "AvzeSlVi2Y7dTKNs90wAd8ZqZ9mttdzqqzhyk3KEYDU", (err,result)=>{
         if(err){
             console.log(err);
             return
@@ -468,5 +483,34 @@ router.get("/previewhMedia",(req,res)=>{
         res.send("ok")
     });
 });
+//从数据库删除图文消息
+router.get("/deleteNewsFromDb",(req,res)=>{
+    var news_id  = req.query.id;
+    if(news_id == ''){
+        let resObj = {
+            status:10060,
+            message:'请选择要删除的文章'
+        }
+        res.send(resObj)
+        return
+    }
+    mediaPushDao.deleteNews(news_id).then((result)=>{
+        let resObj = {
+            status:200,
+            message:'OK'
+        }
+        res.send(resObj)
+        return
+    }).catch((err)=>{
+        console.log("错误来自mediaPushController:"+err)
+        let resObj = {
+            status:10027,
+            message:'文章删除失败'
+        }
+        res.send(resObj)
+        return
+    });
+});
+
 
 module.exports = router;

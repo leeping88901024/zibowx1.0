@@ -45,12 +45,14 @@ router.get('/', function(req, res, next) {
      // console.log(`is authenticated?: ${req.isAuthenticated()}`);
      // console.log(`the user's session is ${JSON.stringify(req.session.passport.user)}`);
     if(req.isAuthenticated()) {
+        console.log('ttt2')
         res.send({
             url: '/testhome2'
         });
     } else {
+        console.log('ttt')
         res.send({
-            url: '/login'
+            url: '/login9999'
         });
     }
 });

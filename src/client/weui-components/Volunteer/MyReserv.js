@@ -67,9 +67,8 @@ class MyReserv extends React.Component {
     }
 
     handleClick(e) {
-        // 判断表单状态，如果是已经撤销，则提示用户已经撤销，不能进行该操作。
-        // 传入：表单序号
-        const query_url = '/db/query_isreserv?reservid=' + e.target.name;
+        let name = e.target.name;
+        const query_url = '/db/query_isreserv?reservid=' + name;
         fetch(query_url,
               {
                   method: 'get',
@@ -78,19 +77,18 @@ class MyReserv extends React.Component {
               }
               }).then(response => response.json()
                 .then(json => {
-                    this.setState({reserv_state: json.reserv_state});             
+                    this.setState({reserv_state: json.reserv_state});
+                    // console.log(this.state.reserv_state);
+                    if(this.state.reserv_state.toString() === '2') {
+                        //console.log(this.state.reserv_state);
+                        this.setState({show_recalled: true});
+                        return;
+                    }
+                    this.setState({reserv_id: name});
+                    this.setState({show: true});
+
+                    //this.setState({reserv_state: -1});         
                 }));
-
-        console.log(this.state.reserv_state);
-        if(this.state.reserv_state.toString() === '2') {
-            //console.log(this.state.reserv_state);
-            this.setState({show_recalled: true});
-            return;
-        }
-        this.setState({reserv_id: e.target.name});
-        this.setState({show: true});
-
-        //this.setState({reserv_state: -1});
     }
 
     hideDialog() {
@@ -117,6 +115,7 @@ class MyReserv extends React.Component {
                 // 打开成功对话框
                 this.setState({show: false})
                 // 更新组件属性
+                this.props.history.push('/home')
                 
 
             }
@@ -159,7 +158,9 @@ class MyReserv extends React.Component {
                       你确定要撤销该预约吗？
                     </Dialog>
                     <Dialog type="ios" title={this.state.style_recalled.title} buttons={this.state.style_recalled.buttons} show={this.state.show_recalled}>
-                      该申请单已经撤销，请不要重复操作。
+                      <div>
+                          <font color='red'>该申请单已经撤销，请不要重复操作</font>
+                      </div>
                     </Dialog>
                 </Panel>
             </div>

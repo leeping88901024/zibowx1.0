@@ -2,7 +2,8 @@ import React from 'react';
 //import styles
 import 'weui';
 import 'react-weui/build/packages/react-weui.css';
-import { Tab, TabBarItem, CellsTitle ,TabBody,TabBar,Cells,Cell,CellHeader,CellBody,Badge,CellFooter,Grids } from 'react-weui';
+import { Tab, TabBarItem, CellsTitle ,TabBody,TabBar,
+    Cells,Cell,CellHeader,CellBody,Dialog,CellFooter,Grids } from 'react-weui';
 import IconHome from '../img/home.png';
 import IconUser from '../img/user.png';
 import IconApply from '../img/apply.png';
@@ -14,14 +15,31 @@ import iconReserv from '../img/reservation_services.png';
 import iconReaction from '../img/reaction.png';
 import iconReimburse from '../img/reinburse.png';
 import iconReinburseprogress from '../img/progress.png';
+import iconyuyue from '../img/yuyue.png';
+import iconchazha from '../img/chazhaxianxuedian.png';
+import iconjiance from '../img/jiancejieguo.png';
+import jilu from '../img/jianlu.png';
 
 class  Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             tab: 0,
-            userinfo: []
-        }
+            userinfo: [],
+            tmpdata: [],
+            show: false,
+            style: {
+                title: "提示",
+                buttons: [
+                    {
+                        label: '确认',
+                        onClick: this.handleDialogClick.bind(this)
+                    }
+                ],
+                show_content: '',
+            },
+        };
+        // this.clickHander = this.clickHander.bind(this);
     }
 
     gridsdata = [
@@ -68,42 +86,56 @@ class  Home extends React.Component {
             onClick: this.clickHander.bind(this,'/login')
         },
         {
-            icon: <img src={iconMyReinburse} />,
-            label: '我的报销',
-            href: 'javascript:;',
-            onClick: this.clickHander.bind(this,'/my/reimburse')
-        },
-        {
-            icon: <img src={iconMyReinburse} />,
+            icon: <img src={iconyuyue} />,
             label: '献血预约',
             href: 'javascript:;',
             onClick: this.clickHander.bind(this,'/locationNavigation')
         },
         {
-            icon: <img src={iconMyReinburse} />,
+            icon: <img src={iconchazha} />,
             label: '查找献血点',
             href: 'javascript:;',
             onClick: this.clickHander.bind(this,'/locationNavigation')
         },
         {
-            icon: <img src={iconMyReinburse} />,
+            icon: <img src={iconjiance} />,
             label: '检测结果',
             href: 'javascript:;',
             onClick: this.clickHander.bind(this,'/testResult')
         },
         {
-            icon: <img src={iconMyReinburse} />,
+            icon: <img src={jilu} />,
             label: '献血记录',
             href: 'javascript:;',
             onClick: this.clickHander.bind(this,'/donRecord')
         }
-    ]
+    ];
+
+    handleDialogClick() {
+        this.setState({ show: false });
+   }
 
     clickHander(url) {
+        // console.log(`the voluntee status is ${this.state.userinfo[3]}`)
+        if (url == '/volunteer/examination' || url == '/locations') {
+            if (this.state.userinfo[3] == null) {
+                // console.log('you want to exemination...')
+                this.setState({show_content: <font size="3" color="red">你还没有申请志愿，请申请志愿后进入考试</font>});
+                this.setState({show: true});
+                return;
+            }
+            // 已经提交志愿者申请表单，但没有完成考试
+            if (url == '/locations' && this.state.userinfo[3] == 1) {
+                this.setState({show_content: <font size="3" color="red">你没有通过考试，请先通过考试再进行预约志愿服务</font>});
+                this.setState({show: true});
+                return;
+            }
+        } 
         this.props.history.push(url);
     }
 
     componentDidMount() {
+
         fetch(
             '/db/userinfo-h',
             {
@@ -115,34 +147,54 @@ class  Home extends React.Component {
             }
         ).then(res => res.json())
          .then(json => {
-             console.log(json.userinfo);
+             // console.log(`the user info is ${json.userinfo}`);
              if(!json.userinfo) {
                  // this.props.history.push('/requestWxAuth?comeFromRouter=/home');
                  return;
              }
+             // 用户显示个人信息
              this.setState({userinfo: json.userinfo});
+             // 根据 用户个人信息来对菜单进行过滤
+            switch (json.userinfo[3]) {
+                case null:
+                    this.setState({tmpdata: this.gridsdata})
+                    break;
+                case 1:
+                    this.setState({tmpdata: this.gridsdata.filter( x => x.label != '志愿者申请')})
+                    break;
+                case 2:
+                this.setState({tmpdata: this.gridsdata.filter( x => x.label != '志愿者申请' && x.label != '志愿者考试')})
+                    break;
+                default:
+                    break;
+            }
          })
+
     }
 
     render() {
         return (
             <Tab>
                 <TabBody>
-                    <Grids style={{display: this.state.tab == 0 ? null : 'none'}} data={this.gridsdata} />
+                    <Grids style={{display: this.state.tab == 0 ? null : 'none'}} data={this.state.tmpdata} />
                     <div style={{display: this.state.tab == 1 ? null : 'none'}} >
                         <Cells>
                             <Cell>
                                 <CellHeader style={{ position: 'relative', marginRight: '10px' }}>
-                                    <img src={IconUser} style={{ width: '50px', display: 'block' }} />
+                                    <img src={this.state.userinfo[1]} style={{ width: '50px', display: 'block' }} />
                                 </CellHeader>
                                 <CellBody>
-                                    <p>{this.state.userinfo[0]}</p>
-                                    <p style={{ fontSize: '13px', color: '#888888' }}>{this.state.userinfo[2]}</p>
+                                    <div>
+                                    {this.state.userinfo[0]}
+                                    <br/>
+                                    {this.state.userinfo[2]}
+                                    </div>
                                 </CellBody>
                             </Cell>
                         </Cells>
                         <CellsTitle>志愿服务</CellsTitle>
                         <Cells>
+                            {/*
                             <Cell onClick={this.clickHander.bind(this,'/my/volunteer/apply')}>
                                 <CellHeader>
                                     <img src={iconApply} alt="" style={{display: `block`, width: `20px`, marginRight: `5px`}}/>
@@ -153,12 +205,13 @@ class  Home extends React.Component {
                                 <CellFooter>
                                 </CellFooter>
                             </Cell>
+                            */}
                             <Cell onClick={this.clickHander.bind(this,'/my/volunteer/reserv')}>
                                 <CellHeader>
                                     <img src={iconReserv} alt="" style={{display: `block`, width: `20px`, marginRight: `5px`}}/>
                                 </CellHeader>
                                 <CellBody>
-                                    我的预约
+                                    预约服务
                                 </CellBody>
                                 <CellFooter>
                                 </CellFooter>
@@ -171,7 +224,7 @@ class  Home extends React.Component {
                                     <img src={iconReaction} alt="" style={{display: `block`, width: `20px`, marginRight: `5px`}}/>
                                 </CellHeader>
                                 <CellBody>
-                                    献血反应提交记录
+                                    献血反应
                                 </CellBody>
                                 <CellFooter>
                                 </CellFooter>
@@ -184,7 +237,7 @@ class  Home extends React.Component {
                                     <img src={iconReimburse} alt="" style={{display: `block`, width: `20px`, marginRight: `5px`}}/>
                                 </CellHeader>
                                 <CellBody>
-                                    我的申请
+                                    报销申请
                                 </CellBody>
                                 <CellFooter>
                                 </CellFooter>
@@ -217,6 +270,14 @@ class  Home extends React.Component {
                         label="我的"
                     />
                 </TabBar>
+                <Dialog 
+                type="ios" title={this.state.style.title} 
+                show={this.state.show}
+                buttons={this.state.style.buttons} >
+                <div>
+                  {this.state.show_content}
+                </div>
+              </Dialog>
             </Tab>
         );
     }

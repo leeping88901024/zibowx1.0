@@ -38,7 +38,7 @@ class Reservation extends React.Component {
         ).then(res => res.json())
          .then(json => {
             this.setState({ location: json.rows[0] });
-            console.log(this.state.location)
+            // console.log(this.state.location)
          });
 
          // 取个人信息
@@ -53,7 +53,7 @@ class Reservation extends React.Component {
              }
          ).then(res => res.json())
           .then(json => {
-              console.log(`the user info is ${JSON.stringify(json)}`);
+              // console.log(`the user info is ${JSON.stringify(json)}`);
               this.setState({
                   userinfo: json.userinfo
               });
@@ -71,7 +71,7 @@ class Reservation extends React.Component {
             }
         ).then(res => res.json())
          .then(json => {
-            console.log(json)
+            // console.log(json)
             this.setState({ periodinfos: json.rows[0] });
          });
     }

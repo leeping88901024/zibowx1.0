@@ -38,7 +38,7 @@ class MyMap extends React.Component {
          .then(json => {
             // console.log(json);
             this.setState({ location: json.rows[0] });
-            console.log(this.state.location);
+            // console.log(this.state.location);
          }); 
 
          // 起点
