@@ -10,13 +10,14 @@ passport.use(new localStrategy(
     function(username, password, done) {
         db.execute(
             `select * from WX_USER_LOCAL t
-            where t.mail = :mail`,
+            where t.active = 1 
+              and t.mail = :mail`,
             [username], //通过邮箱来登录
             (err,result) => {
                 if(err) {
                     return done(err);
                 }
-                // 用户不存在
+                // 用户不存在 或者被停用
                 if(result.rows.length != 1) {
                     return done(null, false);
                 }
@@ -27,6 +28,7 @@ passport.use(new localStrategy(
                 let user = {
                     userid: result.rows[0][0]
                 }
+                console.log('here ....')
                 return done(null, user);
             }
         )
@@ -45,14 +47,14 @@ router.get('/', function(req, res, next) {
      // console.log(`is authenticated?: ${req.isAuthenticated()}`);
      // console.log(`the user's session is ${JSON.stringify(req.session.passport.user)}`);
     if(req.isAuthenticated()) {
-        console.log('ttt2')
+         // console.log('ttt2')
         res.send({
             url: '/testhome2'
         });
     } else {
-        console.log('ttt')
+         // console.log('ttt')
         res.send({
-            url: '/login9999'
+            url: '/login'
         });
     }
 });

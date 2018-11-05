@@ -24,7 +24,13 @@ class Example extends React.Component {
             type: 'account',
             autoLogin: true,
             visible: false,
-            tips: '您输入的用户名或者密码错误。',
+            tips: <div>
+                可能的错误：
+                <ul>
+                    <li>您输入的用户名或者密码错误。</li>
+                    <li>用户被管理员停用。</li>
+                </ul>
+            </div>,
         }
 
         this.handleLogin = this.handleLogin.bind(this);     
@@ -76,12 +82,14 @@ class Example extends React.Component {
                  this.setState({visible: true});
                  return;
              }
-              this.props.history.push(json.url);
+             // console.log('and here ..')
+             // console.log(json.url)
+             this.props.history.push(json.url);
          })
     }
 
     handleOk = (e) => {
-        console.log(e);
+        // console.log(e);
         this.setState({
           visible: false,
         });

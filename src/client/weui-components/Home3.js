@@ -11,7 +11,7 @@ class Home3 extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-        collapsed: true
+        collapsed: false
       };
       this.handleMenuClick = this.handleMenuClick.bind(this);
   }

@@ -364,7 +364,7 @@ router.get('/query_period', (req, res) => {
 
 router.get('/query_localusers', (req, res) => {
     db.execute(
-        `select t.id,t.mail,t.mobile 
+        `select t.id,t.mail,t.mobile,decode(t.active, 1, '在用', 0, '已停用')
         from WX_USER_LOCAL t
         order by t.id`,
         (err,result) => {
@@ -777,6 +777,30 @@ router.post('/edit_period', (req, res) => {
                 });
 });
 
+router.post('/edit_localusrpswd', (req, res) => {
+    const data = req.body;
+    db.execute(`update wx_user_local t 
+                set t.password = :1,
+                    t.mobile = :2
+                where t.id = :3`,
+                [
+                    data.password,
+                    data.mobile,
+                    data.id
+                ],
+                { autoCommit: true},
+                (err,result) =>{
+                    if(err) {
+                        console.log(err);
+                        return;
+                    } else {
+                        data.msg = 'success';
+                        res.json(data);
+                        console.log('提交成功: ' + result.rowsAffected + '个记录。');
+                    }
+                });
+});
+
 router.post('/update_reimburse', (req, res) => {
     const data = req.body;
     const bindvars = {
@@ -847,6 +871,23 @@ router.get('/delete_period', (req, res) => {
     const id = req.query.id;
     db.execute(`delete WX_DNR_LOCATION_RESERVATION where id = :id`,
     [id],
+    {autoCommit: true},
+    (err,result) => {
+        if(err) {
+            console.log(err);
+            return;
+        } else {       
+            res.json({message: 'success'});
+            console.log('提交成功: ' + result.rowsAffected + '个记录。');
+        }
+    }
+    )
+});
+
+router.post('/localusr_disable', (req, res) => {
+    const data = req.body;
+    db.execute(`update wx_user_local t set t.active = :1 where t.id = :2`,
+    [data.active,data.id],
     {autoCommit: true},
     (err,result) => {
         if(err) {
@@ -1151,8 +1192,8 @@ router.get('/updtusrv', (req, res) => {
 router.post('/user_register', (req, res) => {
     let { mail, password, mobile } = req.body;
     db.execute(
-        `insert into WX_USER_LOCAL(ID,PASSWORD,MAIL,mobile)
-        values(seq_local_user_id.nextval,:password,:mail,:mobile)`,
+        `insert into WX_USER_LOCAL(ID,PASSWORD,MAIL,mobile,active)
+        values(seq_local_user_id.nextval,:password,:mail,:mobile,1)`,
         [password, mail, mobile],
         {autoCommit: true},
         (err,result) => {

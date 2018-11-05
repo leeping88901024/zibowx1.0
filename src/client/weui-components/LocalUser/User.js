@@ -36,6 +36,9 @@ class User extends React.Component {
                         case '2': 
                              list['mobile'] = x[key]
                              break
+                        case '3': 
+                             list['active'] = x[key]
+                             break
                         default :
                              break                        
                      }
@@ -47,11 +50,48 @@ class User extends React.Component {
     }
 
     editHandler(id, values) {
-        console.log(`the is is ${id} and the values is ${values}`)
+        let { password, mobile } = values;
+        let data = {
+            password: SHA2(password),
+            id: id,
+            mobile: mobile
+        };
+        fetch('/db/edit_localusrpswd',{
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          }).then(response => response.json()
+            .then(json => {
+                var { msg } = json;
+                console.log(msg);
+                location.reload();
+            }));
     }
 
-    deleteHandler(id) {
-        console.log(`the id i will delete is ${id}`)
+    deleteHandler(id, active) {
+        let tmp;
+        if(active == '在用') {
+            tmp = 0b1;
+        }
+        if(active == '已停用') {
+            tmp = 0b0;
+        }
+        let data ={
+            id: id,
+            active: tmp ^ 0b1
+        }
+
+        console.log(data)
+        fetch('/db/localusr_disable',{
+            method: 'post',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          }).then(response => response.json()
+            .then(json => {
+                var { msg } = json;
+                console.log(msg);
+                location.reload();
+            }));
     }
 
     createHandler(values) {
@@ -98,6 +138,11 @@ class User extends React.Component {
                 dataIndex: 'mobile',
                 key: 'mobile',
             },
+            {
+                title: '用户状态',
+                dataIndex: 'active',
+                key: 'active',
+            },
             //这里还可以加创建时间
 
             // 定义操作列
@@ -110,9 +155,11 @@ class User extends React.Component {
                           <a>更改</a>
                       </UserModal>
                       {'  '}
-                      <Popconfirm title='确定要删除该用户吗'
-                          onConfirm={this.deleteHandler.bind(this,record.id)}>
-                            <a href=''>删除</a>
+                      <Popconfirm title={`你确定要${record.active == '在用' ? 
+                      ' 【停用】 ' : 
+                      ' 【启用】 '}该用户吗？`}
+                          onConfirm={this.deleteHandler.bind(this,record.id, record.active)}>
+                            <a href=''>{record.active == '在用' ? '停用' : '启用'}</a>
                       </Popconfirm>
                           
                     </span>
@@ -123,7 +170,9 @@ class User extends React.Component {
         return (
             <Home3>
                 <UserModal record={{}} onOk={this.createHandler}>
-                    <Button type="primary">创建用户</Button>
+                    <Button
+                      style={{ margin: '0px 0px 10px 0px' }} 
+                      type="primary">创建用户</Button>
                 </UserModal>
                 <Table
                   columns={columns}

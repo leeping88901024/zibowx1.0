@@ -42,8 +42,6 @@ import Learntoknow from '../weui-components/Reimburse/Learntoknow';
 import EditReimburse from '../weui-components/Reimburse/EditReimburse';
 import EditReimburseSuccessMsg from '../weui-components/components/MsgEditReimburse';
 import UpdatePeriod from '../weui-components/Volunteer/UpdatePeriod';
-import { LocaleProvider } from 'antd';
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import 'moment/locale/zh-cn';
 import TestHome2 from '../weui-components/Volunteer/TestHome2';
 import TestHome3 from '../weui-components/Volunteer/TestHome3';
@@ -57,7 +55,7 @@ class WeuiRoute extends React.Component {
     render() {
         return (
             <Router>
-                <switch>
+                <Switch>
                     <Route exact path='/' component={Home} />
                     <Route exact path ='/regist' component={Regist} />
                     <Route path="/autoLogin" component={AutoLogin}/>
@@ -84,13 +82,7 @@ class WeuiRoute extends React.Component {
                     {/* <Route path="/admin_login" component={AdminLogin} ></Route> */}
 
                     {/*志愿者*/}
-                    <Route path='/updateperiod' render={
-                        () => (
-                            <LocaleProvider locale={zh_CN}>
-                                <UpdatePeriod />
-                            </LocaleProvider>
-                        )
-                    } />
+                    <Route path='/updateperiod' component={ UpdatePeriod } />
                     <Route path='/localusers' component={ User } />
                     <Route path='/my/reimburseprogress' component={ MyProgress } />
                     <Route path='/testhome2' component={ TestHome2 } />
@@ -121,7 +113,7 @@ class WeuiRoute extends React.Component {
                         <Redirect to='/home' />
                     )} />
                     <Route exact path='/locations' component={Locations} />
-                </switch>
+                </Switch>
             </Router>
         )
     }

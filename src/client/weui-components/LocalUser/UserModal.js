@@ -188,19 +188,19 @@ class UserModal extends React.Component {
                         {getFieldDecorator('mail', {
                         rules: [
                             {
-                            required: true,
-                            message: '请输入邮箱地址！',
+                                required: true,
+                                message: '请输入邮箱地址！',
                             },
                             {
-                            type: 'email',
-                            message: '邮箱地址格式错误！',
+                                type: 'email',
+                                message: '邮箱地址格式错误！',
                             },
                             {
                                 validator: this.checkMail,
                             },
                         ],
                         initialValue: mail,
-                        })(<Input size="large" placeholder="邮箱" />)}
+                        })(<Input disabled={id != undefined} size="large" placeholder="邮箱" />)}
                     </FormItem>
                     <FormItem 
                         help={this.state.help}

@@ -79,22 +79,45 @@ class Examination extends React.Component {
 
    handleClick(e) {
      // 输出是否是本题得正确答案
-     //console.log(e.target.value);
+     console.log(`###################################`);
+     console.log(`是不是本题的答案： ${e.target.value}`);
      // 是否选中
-     //console.log(e.target.checked);
+     console.log(`是否选中了该答案： ${e.target.checked}`);
      // 题号
-     //console.log(e.target.name);
-
+     console.log(`目前在作答的题号是：${e.target.name}`);
+     console.log(`###################################`);
      // 1.用户所选是否是正确答案？
      // 选择： 加分
      // 不选：减分
      //getScore();
-     if(e.target.value == 1) {
-         let tmp = this.state.score +5;
+
+     // 怎么保存答题结果
+     // 一般评分，所选答案与正确答案对比进行评分
+
+     // 使用它的题号作为为属性
+
+     // 计算答对题的个数
+
+     // 查这道题的答案
+
+     // 变量答案 和用户所选的进行对比，这里要标识选项？？，选项的主键
+
+
+     // 选错的也不影响得分，那么可以全选，则得满分。
+
+     if(e.target.value == 1 && e.target.checked) {
+         let tmp = this.state.score + 2;
          this.setState({
              score: tmp
          })
      }
+
+     if(e.target.value == 1 && !e.target.checked) {
+        let tmp = this.state.score - 2;
+        this.setState({
+            score: tmp
+        })
+    }
 
    }
 
