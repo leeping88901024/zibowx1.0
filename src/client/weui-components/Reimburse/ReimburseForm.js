@@ -233,6 +233,21 @@ class ReimburseForm extends React.Component {
   
         };
 
+        // console.log(file.data);
+        // console.log(file.data.length);
+        // 595790
+        // var compressed = LZString.compress(file.data);
+        // console.log(compressed);
+        // console.log(compressed.length);
+
+        // var original = LZString.decompress(compressed);
+        // console.log(original);
+        // console.log(original.length);
+        // var str = LZString
+        // 在此处对图片进行压缩
+
+        // console.log(LZString.compress(this.state.idcardImg1[0].url));
+        // return;
 
         let data2 = Object.assign({},data,{
             idcardImg1url: this.state.idcardImg1[0].url,
@@ -422,6 +437,16 @@ class ReimburseForm extends React.Component {
                                         files={this.state.proofofrelationImg}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {
+                                            //  console.log(file.data);
+                                            //  console.log(file.data.length);
+                                            //  // 595790
+                                            //  var compressed = LZString.compress(file.data);
+                                            //  console.log(compressed);
+                                            //  console.log(compressed.length);
+
+                                            //  var original = LZString.decompress(compressed);
+                                            //  console.log(original);
+                                            //  console.log(original.length);
                                             let newFiles = [...this.state.proofofrelationImg, {url:file.data}];
                                             this.setState({
                                                 proofofrelationImg: newFiles

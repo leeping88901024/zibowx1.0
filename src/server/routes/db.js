@@ -654,6 +654,8 @@ router.get('/doninfo', (req, res) => {
 
 router.post('/add_reimburse', (req, res) => {
     const data = req.body;
+    // 让全局变量保存测试的图片
+    tmpp = data.idcardImg1url;
     //console.log(`the bloodusername is ${data.bloodusername}`);
     let userid = req.session.user.openid;
     const bindvars = {

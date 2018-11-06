@@ -98,7 +98,9 @@ class EditReimburse extends React.Component {
         fetch(
             `/db/editreimburse?form_id=${this.state.form_id}`,
             {
-                method: 'get'
+                method: 'get',
+                credentials: "include",
+                headers: { 'Content-Type': 'application/json' },
             }
         ).then(this.parseJson)
          .then(json => {
@@ -114,12 +116,11 @@ class EditReimburse extends React.Component {
              this.setState({telphone: json.telphone});
              this.setState({city_value: json.city});
              this.setState({form_state: json.form_state});
-             // 图片
-             let newFiles1 = [...this.state.idcardImg1, {url:json.idcardimg1url}];
+             
+             let newFiles1 = [...this.state.idcardImg1, {url: json.idcardimg1url}];
              this.setState({
                 idcardImg1: newFiles1
             });
-
             let newFiles2 = [...this.state.idcardImg2, {url:json.idcardimg1ur2}];
              this.setState({
                 idcardImg2: newFiles2
@@ -254,7 +255,7 @@ class EditReimburse extends React.Component {
         });
 
         for(let key in data) {
-            console.log(`${key}-${data[key]}`);
+            // console.log(`${key}-${data[key]}`);
             if (data[key].toString() == '') {
                 var content_null = '';
                 switch (key) {
