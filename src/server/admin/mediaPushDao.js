@@ -1,4 +1,5 @@
 var rowsData = require('../utils/rowsProcess');
+var connPool = require("../connPool");
 
 var mediaPushDao = {
     /**
@@ -7,17 +8,10 @@ var mediaPushDao = {
      * @returns {Promise<any>}
      */
     insertArticles : async (articles) => {
-
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "zibowx",
-                    password      : "zibowx",
-                    connectString : "192.168.1.51:1521/spda"
-                });
-
+                conn = await  connPool.getZibowxConn();
                 //向数据库查询下一个ID
                 let NEXT_ID = await conn.execute(
                     "SELECT SEQ_WX_MEIDA.NEXTVAL FROM DUAL"
@@ -61,70 +55,67 @@ var mediaPushDao = {
     loadMediaArticles :  function (res,rownumStart,rownumEnd) {
         var oracledb = require('oracledb');
         oracledb.fetchAsString = [ oracledb.CLOB ];
-
-        oracledb.getConnection(
-            {
-                user: 'zibowx',
-                password: 'zibowx',
-                connectString: '192.168.1.51:1521/spda'
-            },
-            function (err, connection) {
-                if (err) {
-                    console.error(err.message);
-                    return;
-                }
-                connection.execute(
-                    "SELECT WXM.ID,\n" +
-                    "       WXM.TITLE,\n" +
-                    "       WXM.AUTHOR,\n" +
-                    "       WXM.DIGEST,\n" +
-                    "       WXM.THUMB_URL,\n" +
-                    "       WXM.SHOW_COVER_PIC,\n" +
-                    "       WXM.IS_PUSH,\n" +
-                    "       WXM.CREATE_DATE,\n" +
-                    "       WXM.IS_PUSH,\n" +
-                    "       TO_CHAR(WXM.LAST_MODIFY_DATE,'yyyy-MM-dd hh24:mi:ss') LAST_MODIFY_DATE\n" +
-                    " FROM (SELECT W.* , ROWNUM rn  FROM WX_PIC_TEXT_MEDIA W) WXM WHERE WXM.rn >= "+rownumStart+" and WXM.rn < "+rownumEnd,
-                    function (err, result) {
-                        if (err) {
-                            console.error(err.message);
-                            let resBody = {
-                                status : 10017,
-                                message:'加载数据失败'
-                            }
-                            res.send(resBody);
-                            return
-                        }
-
-                        //直接向应给客户端
-                        var data_cus =rowsData.toMap(result.metaData,result.rows);
-                        console.log(data_cus)
-                        let resBody ={
-                            status :200,
-                            message:"ok",
-                            data:data_cus,
-                            lastRownum: rownumEnd
+        connPool.getZibowxConn().then((connection)=>{
+            connection.execute(
+                "SELECT WXM.ID,\n" +
+                "       WXM.TITLE,\n" +
+                "       WXM.AUTHOR,\n" +
+                "       WXM.DIGEST,\n" +
+                "       WXM.THUMB_URL,\n" +
+                "       WXM.SHOW_COVER_PIC,\n" +
+                "       WXM.IS_PUSH,\n" +
+                "       WXM.CREATE_DATE,\n" +
+                "       WXM.IS_PUSH,\n" +
+                "       TO_CHAR(WXM.LAST_MODIFY_DATE,'yyyy-MM-dd hh24:mi:ss') LAST_MODIFY_DATE\n" +
+                " FROM (SELECT W.* , ROWNUM rn  FROM WX_PIC_TEXT_MEDIA W) WXM WHERE WXM.rn >= "+rownumStart+" and WXM.rn < "+rownumEnd,
+                function (err, result) {
+                    if (err) {
+                        console.error(err.message);
+                        let resBody = {
+                            status : 10017,
+                            message:'加载数据失败'
                         }
                         res.send(resBody);
-                        if(connection){
-                            connection.close();
-                        }
-                    });
-            });
+                        return
+                    }
+
+                    //直接向应给客户端
+                    var data_cus =rowsData.toMap(result.metaData,result.rows);
+                    console.log(data_cus)
+                    let resBody ={
+                        status :200,
+                        message:"ok",
+                        data:data_cus,
+                        lastRownum: rownumEnd
+                    }
+                    res.send(resBody);
+                    if(connection){
+                        connection.close((err) => {
+                            if (err) {
+                                console.error(err);
+                            }
+                        });
+                    }
+                });
+        }).catch((err)=>{
+            console.error(err);
+            let resBody = {
+                status : 10017,
+                message:'加载数据失败'
+            }
+            res.send(resBody);
+            return
+        })
     },
     /**
      * 根据图文id数组加载图文消息并返回
      */
     loadMediaArticlesByIds :  function (ids) {
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "zibowx",
-                    password      : "zibowx",
-                    connectString : "192.168.1.51:1521/spda"
-                });
+                conn = await  connPool.getZibowxConn();
+
                 //加载文章
                 let result = await conn.execute(
                     "SELECT WXM.ID,\n" +
@@ -164,6 +155,59 @@ var mediaPushDao = {
     loadMediaArticlesById :  function (res,id) {
         var oracledb = require('oracledb');
         oracledb.fetchAsString = [ oracledb.CLOB ];
+        connPool.getZibowxConn().then((connection)=>{
+            connection.execute(" SELECT WXM.ID,\n" +
+                "       WXM.TITLE,\n" +
+                "       WXM.CONTENT,\n" +
+                "       WXM.AUTHOR,\n" +
+                "       WXM.DIGEST,\n" +
+                "       WXM.SHOW_COVER_PIC,\n" +
+                "       WXM.THUMB_URL,\n" +
+                "       WXM.THUMB_PATH,\n" +
+                "       WXM.THUMB_ORIGI_NAME,\n" +
+                "       WXM.THUMB_SIZE,\n" +
+                "       WXM.THUMB_TYPE\n" +
+                " FROM  WX_PIC_TEXT_MEDIA WXM WHERE ID = :id",
+                [id]
+                ,
+                function (err, result) {
+                    if (err) {
+                        console.error(err.message);
+                        let resBody = {
+                            status : 10017,
+                            message:'加载数据失败'
+                        }
+                        res.send(resBody);
+                        return
+                    }
+
+                    //直接向应给客户端
+                    var data_cus =rowsData.toMap(result.metaData,result.rows);
+                    console.log(data_cus)
+                    let resBody ={
+                        status :200,
+                        message:"ok",
+                        data:data_cus,
+                    }
+                    res.send(resBody);
+                    if(connection){
+                        connection.close((err) => {
+                            if (err) {
+                                console.error(err);
+                            }
+                        });
+                    }
+                });
+        }).catch((err)=>{
+            console.error(err);
+            let resBody = {
+                status : 10017,
+                message:'加载数据失败'
+            }
+            res.send(resBody);
+            return
+        })
+
 
         oracledb.getConnection(
             {
@@ -176,61 +220,17 @@ var mediaPushDao = {
                     console.error(err.message);
                     return;
                 }
-                connection.execute(" SELECT WXM.ID,\n" +
-                    "       WXM.TITLE,\n" +
-                    "       WXM.CONTENT,\n" +
-                    "       WXM.AUTHOR,\n" +
-                    "       WXM.DIGEST,\n" +
-                    "       WXM.SHOW_COVER_PIC,\n" +
-                    "       WXM.THUMB_URL,\n" +
-                    "       WXM.THUMB_PATH,\n" +
-                    "       WXM.THUMB_ORIGI_NAME,\n" +
-                    "       WXM.THUMB_SIZE,\n" +
-                    "       WXM.THUMB_TYPE\n" +
-                    " FROM  WX_PIC_TEXT_MEDIA WXM WHERE ID = :id",
-                    [id]
-                    ,
-                    function (err, result) {
-                        if (err) {
-                            console.error(err.message);
-                            let resBody = {
-                                status : 10017,
-                                message:'加载数据失败'
-                            }
-                            res.send(resBody);
-                            return
-                        }
 
-                        //直接向应给客户端
-                        var data_cus =rowsData.toMap(result.metaData,result.rows);
-                        console.log(data_cus)
-                        let resBody ={
-                            status :200,
-                            message:"ok",
-                            data:data_cus,
-                        }
-                        res.send(resBody);
-                        if(connection){
-                            connection.close();
-                        }
-                    });
             });
     },
     /**
      * 更新文章到数据库
      */
     updateArticles : async (articles) => {
-
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "zibowx",
-                    password      : "zibowx",
-                    connectString : "192.168.1.51:1521/spda"
-                });
-
+                conn = await  connPool.getZibowxConn();
                 console.log("文章传过来没有"+JSON.stringify(articles))
                 //插入文章
                 let result = await conn.execute(
@@ -280,15 +280,10 @@ var mediaPushDao = {
      * 从数据库删除微信文章
      */
     deleteNews : async (id) => {
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "zibowx",
-                    password      : "zibowx",
-                    connectString : "192.168.1.51:1521/spda"
-                });
+                conn = await  connPool.getZibowxConn();
                 //插入文章
                 let result = await conn.execute("DELETE FROM WX_PIC_TEXT_MEDIA WHERE ID = :ID",
                     [id],

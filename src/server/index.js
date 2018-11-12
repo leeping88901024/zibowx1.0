@@ -9,7 +9,6 @@ var multipartMiddleware = multipart();
 var wxUserLogin = require('./user/wxUserLogin');
 var wxProcess = require('./wx_process/wx_process');
 var donAppoint = require('./donAppoint/donAppointController');
-var bldRepay = require('./bldRepay/bldRepayController');
 var queryTestResult  = require('./testResult/testResultController');
 var donRecord = require('./donRecord/donRecordController');
 var adminMedia = require('./admin/mediaPushController');
@@ -115,8 +114,6 @@ app.use('/public/wxUserLogin',wxUserLogin);
 app.use('/public/wxProcess',wxProcess);
 //献血预约
 app.use('/public/donAppoint',donAppoint);
-//用血报销
-app.use('/public/bldRepay',bldRepay);
 //获取access_token
 app.get("/getAccessToken", function(req, res) {
    var accessToken = require('./wx_process/getAccessToken');

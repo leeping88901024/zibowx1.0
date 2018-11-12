@@ -46,7 +46,6 @@ router.post('/getWxJsSdkCfgParms',(req,res)=>{
  * @type {Router|router}
  */
 router.post('/donBldConsult',(req,res)=>{
-
     //获取参数
     var reqBody = req.body;
     var p_name = reqBody.name;
@@ -202,6 +201,12 @@ router.post('/donBldConsult',(req,res)=>{
             }
         }).catch((err)=>{
             console.log("献血征询controller模块异常"+err)
+            let resBody = {
+                status:500,
+                message:"服务器内部错误！"
+            }
+            res.send(resBody);
+            return;
         });
         //把数据保存到session
         req.session.consult = consult;
@@ -243,7 +248,6 @@ router.get('/loadEduNationProfess',(req,res)=>{
  * @type {Router|router}
  */
 router.post('/donBldDetail',(req,res)=>{
-
     //获取参数
      var tell = req.body.tell;
      var sex = req.body.sex;
@@ -300,7 +304,7 @@ router.post('/donBldDetail',(req,res)=>{
     if(consult == null){
         let resBody = {
             status:10014,
-            message:'会话失效'
+            message:'会话失效,请重新预约！'
         }
         res.send(resBody)
         return
@@ -327,12 +331,11 @@ router.post('/donBldDetail',(req,res)=>{
           birthday : birthday,
          aboGroup : aboGroup
     }
-    console.log(JSON.stringify(dnrInfo)+"就算耶稣也救不了他 我说的")
-
     //传入dao层插入数据局
     donBldAppointDao.insertAppointInfo(dnrInfo).then((result)=>{
         //将recruit_seq存入session
-        req.session.recruitSeq = result;
+        req.session.recruitSeq = result.d_recruit_seq;
+
         //返回结果
         let resBody = {
             status:200,
@@ -427,6 +430,8 @@ router.get('/loadMyAppointRecord',(req,res)=>{
         res.send(resBody);
         return
     }
+
+
     //通过数据库查询
     donBldAppointDao.getAppointRecordByPsnseq(psnSeq).then((result)=>{
         console.log(JSON.stringify(result))
@@ -482,7 +487,7 @@ router.post('/cancelAppoint',(req,res)=>{
     })
 });
 /**
- * 更久seq加载地址
+ * 根据seq加载地址
  */
 router.get("/loadNvgationAddress",(req,res)=>{
     //获取seq

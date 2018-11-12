@@ -271,7 +271,6 @@ router.get('/query_reserv', (req, res) => {
         order by t.create_date desc`,
         [userid],
         (err,result) => {
-            // console.log(result);
             if(result == undefined) { return; }
             res.send(
                 {
@@ -535,7 +534,7 @@ router.get('/location/reservation', (req, res) => {
 
 router.get('/selectedperiod', (req, res) => {
     const period_id = req.query.period_id;
-    console.log(period_id);
+    // console.log(period_id);
     db.execute(
         `select * from WX_DNR_LOCATION_RESERVATION t
         where t.id = :period_id`,   
@@ -723,7 +722,7 @@ router.post('/add_reimburse', (req, res) => {
 
 router.post('/add_period', (req, res) => {
     const data = req.body;
-    console.log(data);
+    // console.log(data);
     const userid = req.session.passport.user;
     const localstart = getAbsTime(data.start);
     const localend = getAbsTime(data.end);

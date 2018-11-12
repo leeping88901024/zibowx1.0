@@ -10,7 +10,6 @@ import IconApply from '../img/apply.png';
 import IconExamination from '../img/examination.png';
 import IconReservationServce from '../img/reservation_services.png';
 import iconMyReinburse from '../img/myreinburse.png';
-import iconApply from '../img/apply.png';
 import iconReserv from '../img/reservation_services.png';
 import iconReaction from '../img/reaction.png';
 import iconReimburse from '../img/reinburse.png';

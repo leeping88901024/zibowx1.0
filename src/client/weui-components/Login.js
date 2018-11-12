@@ -1,18 +1,16 @@
 import React from 'react';
-import { Form, FormCell, CellHeader, CellBody, Input, ButtonArea, Label, Button  } from 'react-weui';
 import { Checkbox, Alert, Icon, Modal  } from 'antd';
-import { Link } from 'react-router-dom';
 //import styles from './Login.less';
 // import style
 import 'weui';
 import 'react-weui/build/packages/react-weui.css';
 import Login from './components/Login/index';
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
+const { Tab, UserName, Password, Submit } = Login;
 
 
 let styles = {
     width: '368px',
-    margin: '0 auto',
+    margin:'20vh auto'
 }
 
 
@@ -142,9 +140,11 @@ class Example extends React.Component {
 
         return (
             <div>
+                {/*
                 <a href={this.state.url}>微信登录</a>
                 <br/>
                 <p>本地登录</p>
+                */}
                 <div style={styles}>
                     <Login
                         defaultActiveKey={this.state.type}
@@ -178,7 +178,8 @@ class Example extends React.Component {
                             忘记密码
                             </a>
                         </div>
-                        <Submit>登录</Submit>
+                        <Submit style={{width: "100%",marginTop:'2vh',height:'6vh'}} >登录</Submit>
+                        {/*
                         <div style={{
                             textAlign: 'left',
                             marginTop: '24px',
@@ -187,6 +188,7 @@ class Example extends React.Component {
                             其他登录方式
                             <Icon type="wechat" theme="outlined" />
                         </div>
+                        */}
                     </Login>
                     <Modal
                         title="提示信息"

@@ -1,19 +1,16 @@
 var rowsData = require('../../utils/rowsProcess');
+var connPool = require("../../connPool");
+
 /**
  * 向数据库查询用户
  */
 var userdao = {
     getUserByOpenId : function (openid) {
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                        conn = await oracledb.getConnection({
-                            user          : "zibowx",
-                            password      : "zibowx",
-                            connectString : "192.168.1.51:1521/spda"
-                        });
-                        //献血者认证
+                conn = await  connPool.getZibowxConn();
+                //献血者认证
                         let result = await conn.execute(
                             "SELECT * FROM WX_USER WHERE OPENID =:openid",
                             [openid],
@@ -39,17 +36,12 @@ var userdao = {
             }
         });
     },
-//向数据库插入数据
+    //向数据库插入数据
     insertUserInfo : async (user) => {
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "zibowx",
-                    password      : "zibowx",
-                    connectString : "192.168.1.51:1521/spda"
-                });
+                conn = await  connPool.getZibowxConn();
                 //献血者认证
                 let result = await conn.execute(
                     "insert into wx_user(id,img_path,openid,online_name,nation,province,city,sex,regist_date)" +
@@ -86,36 +78,36 @@ var userdao = {
      */
 //根据证件类型和编号查询psn_seq
     getPsnSeqByIdcard : (isIdcard,certType,certNbr)=>{
-            var oracledb = require('oracledb');
             return new Promise(async function(resolve, reject) {
                 let conn;
                 try {
-                    conn = await oracledb.getConnection({
-                        user          : "nbsss",
-                        password      : "a123456",
-                        connectString : "192.168.1.16:1521/nbsss"
-                    });
-
+                    conn = await  connPool.getNbsssConn();
                     var db_psn_seq = '';
                     //如果是身份证
                     if(isIdcard){
-                        let result = await conn.execute("select psn_seq from DNR_PERSON where idcard = :idcard",
+                        let result = await conn.execute("select psn_seq,cell_call from DNR_PERSON where idcard = :idcard",
                             [certNbr]);
-                        db_psn_seq = result.rows;
+                        db_psn_seq = result;
 
                     }else{
-                        let result = await conn.execute("select psn_seq from DNR_PSN_CERTIFICATE t where cert_type_seq = :cert_type_seq and certificate_nbr = :cert_nbr",
+                        let result = await conn.execute("select p.psn_seq,\n" +
+                            "       p.cell_call \n" +
+                            "  from DNR_PSN_CERTIFICATE DPC,\n" +
+                            "       DNR_PERSON P\n" +
+                            " where dpc.psn_seq = p.psn_seq\n" +
+                            "   and cert_type_seq = :cert_type_seq and certificate_nbr = :cert_nbr",
                             [certType,certNbr]);
-                        db_psn_seq = result.rows;
+                            db_psn_seq = result;
                     }
 
                     if(false == db_psn_seq){
                         resolve(null)
                     }else{
-                        resolve(db_psn_seq);
+                        resolve(rowsData.toMap(db_psn_seq.metaData,db_psn_seq.rows));
                     }
                     //返回
                 } catch (err) { // catches errors in getConnection and the query
+                    console.log(err+"来自皮皮虾")
                     reject(err);
                 } finally {
                     if (conn) {   // the conn assignment worked, must release
@@ -128,17 +120,42 @@ var userdao = {
                 }
             });
         },
+//根据psn_seq和献血编号查询用户信息
+    getDonByPsnSeqDonId : (psn_seq,don_id)=>{
+        return new Promise(async function(resolve, reject) {
+            let conn;
+            try {
+                conn = await  connPool.getNbsssConn();
+                let result = await conn.execute("select count(*) cnt from dnr_bld_collect where psn_seq = :PSN_SEQ  and don_id = :DON_ID\n",
+                        [parseInt(psn_seq),don_id]);
+                console.log(JSON.stringify(result));
+
+                if(false == result){
+                    resolve(null)
+                }else{
+                    resolve(rowsData.toMap(result.metaData,result.rows));
+                }
+                //返回
+            } catch (err) { // catches errors in getConnection and the query
+                reject(err);
+            } finally {
+                if (conn) {   // the conn assignment worked, must release
+                    try {
+                        await conn.release();
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+        });
+    },
+
 //更新用户信息
     updateUserInfo : (openid,tell,psn_seq) =>{
-            var oracledb = require('oracledb');
             return new Promise(async function(resolve, reject) {
                 let conn;
                 try {
-                    conn = await oracledb.getConnection({
-                        user          : "zibowx",
-                        password      : "zibowx",
-                        connectString : "192.168.1.51:1521/spda"
-                    });
+                    conn = await  connPool.getZibowxConn();
                     //献血者认证
                     let result = await conn.execute(
                         "UPDATE WX_USER SET TELL = :TELL,PSN_SEQ =  :PSN_SEQ  WHERE  OPENID = :OPENID",
@@ -166,6 +183,5 @@ var userdao = {
             });
 }
 }
-
 
 module.exports=userdao;

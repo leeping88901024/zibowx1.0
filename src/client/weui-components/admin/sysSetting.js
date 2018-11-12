@@ -1,6 +1,5 @@
 import React,{ Component }  from 'react';
 import 'antd/dist/antd.css';
-import './admin_index.css'
 import Home2  from "../Home2";
 
 import {Form, Icon, Input, Button, Checkbox, Select, TimePicker, Upload, message, Modal} from 'antd';
@@ -172,7 +171,7 @@ class LocationSetting extends React.Component {
             closedTime :subclosedTime,
             donType:this.props.form.getFieldValue("donType"),
             addressDetail :this.props.form.getFieldValue("addressDetail"),
-            services :this.props.form.getFieldValue("services"),
+           // services :this.props.form.getFieldValue("services"),
             locationName:this.state.locationName,
             thumbFlag:this.state.thumbFlag,
             thumb:this.state.fileList,
@@ -296,6 +295,7 @@ class LocationSetting extends React.Component {
                         <Input />
                         )}
                 </FormItem>
+                {/*
                 <FormItem
                     {...addressLayout}
                     label="提供的服务" >
@@ -305,6 +305,7 @@ class LocationSetting extends React.Component {
                         <CheckboxGroup options={this.state.locationService} />
                     )}
                 </FormItem>
+                */}
                 <div style={{marginTop:'2vh',height:'18vh'}}>
                     <label style={{display:'block',float:'left',width:'22%',textAlign:'right'}}>上传采血点图片:</label>
                     <div className="clearfix" style={{float:'left',marginLeft:'2vw',width:'75%'}} onClick={()=>{

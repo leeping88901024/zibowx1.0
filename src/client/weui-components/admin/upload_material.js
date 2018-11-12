@@ -1,6 +1,5 @@
 import React,{ Component }  from 'react';
 import 'antd/dist/antd.css';
-import './admin_index.css'
 import {WangEditor,editor} from "./wangEditor"
 import Home2 from "../Home2";
 

@@ -3,7 +3,6 @@ import { Dialog,Button,Article,Panel,
     PanelBody,ButtonArea,
     PanelHeader } from 'react-weui';
 import Question, {} from '../components//Question';
-import getScore from './score';
 
 class Examination extends React.Component {
 
@@ -32,10 +31,9 @@ class Examination extends React.Component {
             },
             // 问题
             questions: [],
+            arr: [],
             // 分数
-            score: 0,
-            // 所选
-            choice:{}
+            score: 0
         };
         this.handleClick = this.handleClick.bind(this);
     }
@@ -58,9 +56,6 @@ class Examination extends React.Component {
    }
    handleResultDialogClick() {
     this.setState({ resultshow: false });
-    // 计算分数的算法待定
-    // 假如现已经有分数，则，最简单的即为更具分数更新用户表，标识用户以及通过献血者的考试
-    console.log('sarting fetch ...')
     if (this.state.score > 60) {
         fetch(
             '/db/updtusrv',
@@ -73,51 +68,23 @@ class Examination extends React.Component {
             this.props.history.push('/home')
             });
     }
-    // 提示用户没有通过考试
 
-  }
+   }
 
    handleClick(e) {
-     // 输出是否是本题得正确答案
-     console.log(`###################################`);
-     console.log(`是不是本题的答案： ${e.target.value}`);
-     // 是否选中
-     console.log(`是否选中了该答案： ${e.target.checked}`);
-     // 题号
-     console.log(`目前在作答的题号是：${e.target.name}`);
-     console.log(`###################################`);
-     // 1.用户所选是否是正确答案？
-     // 选择： 加分
-     // 不选：减分
-     //getScore();
+     var isc = e.target.value.substr(0,1);
+     var qid = e.target.value.substr(1,e.target.value.length);
 
-     // 怎么保存答题结果
-     // 一般评分，所选答案与正确答案对比进行评分
-
-     // 使用它的题号作为为属性
-
-     // 计算答对题的个数
-
-     // 查这道题的答案
-
-     // 变量答案 和用户所选的进行对比，这里要标识选项？？，选项的主键
-
-
-     // 选错的也不影响得分，那么可以全选，则得满分。
-
-     if(e.target.value == 1 && e.target.checked) {
-         let tmp = this.state.score + 2;
-         this.setState({
-             score: tmp
-         })
+     if(e.target.checked) {
+         this.state.arr.push({ 
+             aid: e.target.name, // <选项编号>
+             isc: isc,  // <是否本题正确答案>
+             qid: qid  // <题目编号>
+         });
+     } else {
+         var tmp =this.state.arr.filter(x => x.aid != e.target.name);
+         this.setState({arr: tmp})
      }
-
-     if(e.target.value == 1 && !e.target.checked) {
-        let tmp = this.state.score - 2;
-        this.setState({
-            score: tmp
-        })
-    }
 
    }
 
@@ -129,7 +96,6 @@ class Examination extends React.Component {
               title={x[2]}
               key={x[0]}
               handleClick={this.handleClick}
-              //question_type={x[1]}
               question_id={x[0]}
               >
               
@@ -147,8 +113,44 @@ class Examination extends React.Component {
                     <ButtonArea>
                         <Button msg = {this.responseMsg}
                                     onClick={() => {
-                                        // 显示所得分数
-                                         this.setState({resultshow : true});
+                                        /*
+                                        记分算法
+                                        */
+                                       var tmp = 0; // 记分总和
+                                       for (let index = 0; index < this.state.questions.length; index++) {
+                                           var cnt = 0; // 计算它答对的个数
+                                           var currcnt = 0; // 正确答案个数
+                                           var currscore = 0; // 原题分数
+                                           const question = this.state.questions[index]; // 题目
+                                           for (let index = 0; index < this.state.arr.length; index++) {
+                                               const singlechoise = this.state.arr[index];
+                                               // 同一道题
+                                               if (singlechoise.qid == question[0]) {
+                                                   var score = 0; // 本题分数
+                                                   currcnt = question[4];
+                                                   currscore = question[3];
+                                                   if (singlechoise.isc == 0) {
+                                                       currcnt = -666;
+                                                       break;
+                                                   }
+                                                   if ( singlechoise.isc == 1) {
+                                                       cnt ++;
+                                                   }
+                                               }
+                                           }
+                                           if (cnt == 0 || cnt > currcnt) { score = 0; }
+                                           if (cnt == currcnt) {
+                                               score = currscore;
+                                           }else {
+                                                if (currcnt != -666) {
+                                                    score = currscore/2;
+                                                }
+                                           }
+                                            tmp += score;  
+                                       }
+                                       this.setState({score: tmp});
+                                       this.setState({resultshow: true});
+                                        // console.log(tmp);
                                     }}>
                                     交卷
                         </Button>

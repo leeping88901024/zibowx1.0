@@ -1,18 +1,13 @@
 var rowsData = require('../utils/rowsProcess');
+var connPool = require("../connPool");
 
 var testResultDao = {
     //检测结果查询
     queryTestResult:(psn_seq)=>{
-        console.log("血液检测结果收到的 记录为 "+psn_seq)
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "nbsss",
-                    password      : "a123456",
-                    connectString : "192.168.1.16:1521/nbsss"
-                });
+                conn = await  connPool.getNbsssConn();
                 //血液检测结果查询
                 var sql ='      SELECT DISTINCT  P.CELL_CALL,\n' +
                     '                           TO_CHAR(PR.REG_DATE,\'YYYY-mm-DD\') REG_DATE,\n' +

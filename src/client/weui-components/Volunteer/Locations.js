@@ -1,9 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Tab,Badge,Panel,PanelBody,SearchBar,MediaBox,MediaBoxHeader,
+import {Badge,Panel,PanelBody,SearchBar,MediaBox,MediaBoxHeader,
     MediaBoxBody,MediaBoxTitle,MediaBoxDescription,MediaBoxInfo,
-    MediaBoxInfoMeta, Cells, Cell, CellMore , PanelFooter , PanelHeader , Page   } from 'react-weui';
-import TempImg from '../../img/reservation_donation.png';
+    MediaBoxInfoMeta, PanelHeader , Page   } from 'react-weui';
 
 class Locations extends React.Component {
     constructor(props) {

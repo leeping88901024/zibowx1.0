@@ -1,7 +1,7 @@
 import React from 'react';
 import { Preview,PreviewHeader,PreviewItem,PreviewBody,Form,FormCell, 
      CellBody, CellsTitle, TextArea, PanelHeader,
-    ButtonArea, Button,Panel , Page , PanelBody   } from 'react-weui';
+    ButtonArea, Button,Panel, PanelBody   } from 'react-weui';
 import { NavLink } from 'react-router-dom';
 
 class Reservation extends React.Component {

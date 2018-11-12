@@ -149,14 +149,12 @@ router.get('/recordResult',(req,res)=>{
         res.send(resbody);
         return
     }).catch((err)=>{
-        if(result == ''){
             let resBody = {
                 status:10019,
                 message:'检测结果查询异常'
             }
             res.send(resBody);
             return
-        }
     })
 })
 

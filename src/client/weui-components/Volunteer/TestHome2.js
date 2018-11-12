@@ -5,7 +5,9 @@ class TestHome2 extends React.Component {
     render() {
         return (
             <Home2>
-                这是主页面，请在左侧选择其他页面。
+               <div style={{display:'block',width:'100%',height:'100%',textAlign:'center',textAlignVertical:'center',fontSize:'48px',paddingTop:'24%'}}>
+                   欢迎来到微信献血公众服务系统后台管理系统！
+               </div>
             </Home2>
         )
     }

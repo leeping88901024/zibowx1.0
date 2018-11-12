@@ -1,17 +1,13 @@
 var rowsData = require('../utils/rowsProcess');
+var connPool = require("../connPool");
 
 var donRecordDao = {
     //证件类型、献血者于用血者关系
     queryDonRecord:(psn_seq)=>{
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "nbsss",
-                    password      : "a123456",
-                    connectString : "192.168.1.16:1521/nbsss"
-                });
+                conn = await  connPool.getNbsssConn();
                 //献血记录查询
                 var sql ='  SELECT P.PSN_NAME,\n' +
                     '                            P.IDCARD,\n' +
@@ -36,7 +32,7 @@ var donRecordDao = {
                     '                        AND BC.ACTIVE = 1\n' +
                     '                        AND P.PSN_SEQ = :PSN_SEQ\n' +
                     '                   ORDER BY BC.COLLATE_DATE DESC   ';
-                let result = await conn.execute(sql,[psn_seq]);
+                let result = await conn.execute(sql,[parseInt(psn_seq)]);
                 if(false == result.rows){
                     resolve(null)
                 }else{

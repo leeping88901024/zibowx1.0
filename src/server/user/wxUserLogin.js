@@ -6,6 +6,7 @@ var session = require('express-session');
 var WxUserLogin = require('wechat-oauth');
 var client = new WxUserLogin(wxconfig.appid, wxconfig.appscret);
 var userdao =  require('./dao/userdao');
+var svgCaptcha = require('svg-captcha');
 
 /**
  * 从微信服务器获取微信用户信息
@@ -102,7 +103,7 @@ router.get('/getWxUserInfoFromWx',(req,res) => {
     });
 });
 /**
- * 发送验证码
+ * 发送手机验证码
  * @type {Router|router}
  */
 router.get('/sendCaptcha',(req,res)=>{
@@ -122,7 +123,16 @@ router.get('/sendCaptcha',(req,res)=>{
     //响应信息
     res.send(resBody);
 });
-
+/**
+ * 发送图片验证码
+ */
+router.get("/getPicCatpcha",(req,res)=>{
+    //生成图片验证码返回给客户端
+    var captcha = svgCaptcha.create();
+    req.session.picturecaptcha = captcha.text;
+    res.type('svg');
+    res.status(200).send(captcha.data);
+});
 
 
 module.exports = router;

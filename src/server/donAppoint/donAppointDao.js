@@ -1,121 +1,120 @@
 var rowsData = require('../utils/rowsProcess');
+var connPool = require("../connPool");
+var wxconfig = require("../wxconfig");
 
 var donBldAppointDao = {
     //加载所有的行政区
     loadRegion : function (res) {
-        var oracledb = require('oracledb');
-        oracledb.getConnection(
-            {
-                user: 'zibowx',
-                password: 'zibowx',
-                connectString: '192.168.1.51:1521/spda'
-            },
-            function (err, connection) {
-                if (err) {
-                    console.error(err.message);
-                    return;
-                }
-                connection.execute(
-                    "select location_id,location_name from WX_REGION where active = 1",
-                    function (err, result) {
-                        if (err) {
-                            console.error(err.message);
-                            let resBody = {
-                                status : 10017,
-                                message:'加载数据失败'
-                            }
-                            res.send(resBody);
-                            return
-                        }
-
-                        //直接向应给客户端
-                        var data_cus =rowsData.toMap(result.metaData,result.rows);
-                        let resBody ={
-                            status :200,
-                            message:"ok",
-                            data:data_cus
+        connPool.getZibowxConn().then((connection)=>{
+            connection.execute(
+                "select location_id,location_name from WX_REGION where active = 1",
+                function (err, result) {
+                    if (err) {
+                        console.error(err.message);
+                        let resBody = {
+                            status : 10017,
+                            message:'加载数据失败'
                         }
                         res.send(resBody);
-                        if(connection){
-                            connection.close();
-                        }
-                    });
-            });
+                        return
+                    }
+
+                    //直接向应给客户端
+                    var data_cus =rowsData.toMap(result.metaData,result.rows);
+                    let resBody ={
+                        status :200,
+                        message:"ok",
+                        data:data_cus
+                    }
+                    res.send(resBody);
+                    if(connection){
+                        connection.close((err) => {
+                            if (err) {
+                                console.error(err);
+                            }
+                        });
+                    }
+                });
+        }).catch((err)=>{
+            console.error(err);
+            let resBody = {
+                status : 10017,
+                message:'加载数据失败'
+            }
+            res.send(resBody);
+            return
+        })
     },
     //加载所有地点
     loadLocation:function (res){
-        var oracledb = require('oracledb');
-        oracledb.getConnection(
-            {
-                user: 'zibowx',
-                password: 'zibowx',
-                connectString: '192.168.1.51:1521/spda'
-            },
-            function (err, connection) {
-                if (err) {
-                    console.error(err.message);
-                    return;
-                }
-                var sql ="\n" +
-                    "SELECT WLD.EXACT_ADDRESS,\n" +
-                    "       WLD.LOCATION_SEQ,\n" +
-                    "       DT.TYPE_DESC,\n" +
-                    "       WLD.TYPE_ID,\n" +
-                    "       WLD.OPENINGTIME,\n" +
-                    "       WLD.CLOSEDTIME,\n" +
-                    "       WLD.LOCATION_NAME,\n" +
-                    "       WLD.IMG_URI,\n" +
-                    "      (SELECT wmsys.wm_concat('''' || ls.icon_path || '''')  \n" +
-                    "      FROM wx_location_service ls\n" +
-                    "      WHERE ls.service_id IN (SELECT sdr.service_id \n" +
-                    "      FROM wx_service_detail_relation sdr \n" +
-                    "      WHERE sdr.detail_id = WLD.LOCATION_SEQ)) AS services \n" +
-                    "  FROM  WX_LOCATION_DETAIL WLD,\n" +
-                    "        WX_LOCATION_DON_TYPE DT,\n" +
-                    "        NBSSS.DNR_PHLE_LOCATION@DL_FZ DPL\n" +
-                    "WHERE  DPL.LOCATION_SEQ = WLD.LOCATION_SEQ\n" +
-                    "  AND  DT.TYPE_ID = WLD.TYPE_ID\n" +
-                    "  AND DPL.ACTIVE = 1   ";
-                connection.execute(
-                    sql,
-                    function (err, result) {
-                        if (err) {
-                            console.error(err.message);
-                            let resBody = {
-                                status : 10017,
-                                message:'加载数据失败'
-                            }
-                            res.send(resBody);
-                            return
-                        }
-
-                        //console.log(result.rows+result.metaData)
-                        //直接向应给客户端
-                        let data_cus =rowsData.toMap(result.metaData,result.rows);
-                        let resBody ={
-                            status :200,
-                            message:"ok",
-                            data:data_cus
+        connPool.getZibowxConn().then((connection)=>{
+            var sql ="\n" +
+                "SELECT WLD.EXACT_ADDRESS,\n" +
+                "       WLD.LOCATION_SEQ,\n" +
+                "       DT.TYPE_DESC,\n" +
+                "       WLD.TYPE_ID,\n" +
+                "       WLD.OPENINGTIME,\n" +
+                "       WLD.CLOSEDTIME,\n" +
+                "       WLD.LOCATION_NAME,\n" +
+                "       WLD.IMG_URI,\n" +
+                "      (SELECT wmsys.wm_concat('''' || ls.icon_path || '''')  \n" +
+                "      FROM wx_location_service ls\n" +
+                "      WHERE ls.service_id IN (SELECT sdr.service_id \n" +
+                "      FROM wx_service_detail_relation sdr \n" +
+                "      WHERE sdr.detail_id = WLD.LOCATION_SEQ)) AS services \n" +
+                "  FROM  WX_LOCATION_DETAIL WLD,\n" +
+                "        WX_LOCATION_DON_TYPE DT,\n" +
+                "        NBSSS.DNR_PHLE_LOCATION@DL_FZ DPL\n" +
+                "WHERE  DPL.LOCATION_SEQ = WLD.LOCATION_SEQ\n" +
+                "  AND  DT.TYPE_ID = WLD.TYPE_ID\n" +
+                "  AND DPL.ACTIVE = 1   ";
+            connection.execute(
+                sql,
+                function (err, result) {
+                    if (err) {
+                        console.error(err.message);
+                        let resBody = {
+                            status : 10017,
+                            message:'加载数据失败'
                         }
                         res.send(resBody);
-                        if(connection){
-                            connection.close();
-                        }
-                    });
-            });
+                        return
+                    }
 
+                    //console.log(result.rows+result.metaData)
+                    //直接向应给客户端
+                    let data_cus =rowsData.toMap(result.metaData,result.rows);
+                    let resBody ={
+                        status :200,
+                        message:"ok",
+                        data:data_cus
+                    }
+                    res.send(resBody);
+                    if(connection){
+                        connection.close((err) => {
+                            if (err) {
+                                console.error(err);
+                            }
+                        });
+                    }
+                });
+
+        }).catch((err)=>{
+            console.error(err);
+            let resBody = {
+                status : 10017,
+                message:'加载数据失败'
+            }
+            res.send(resBody);
+            return
+        })
     },
     //查询献血者可献血日期
     getDnrReturnDate:function(isIdcard,certType,certNumn) {
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "zibowx",
-                    password      : "zibowx",
-                    connectString : "192.168.1.51:1521/spda"
-                });
+                conn = await  connPool.getZibowxConn();
                 //如果身份证
                 if(isIdcard){
                     let result = await conn.execute('SELECT DISTINCT P.PSN_NAME,\n' +
@@ -123,8 +122,8 @@ var donBldAppointDao = {
                         '                P.PSN_SEQ,\n' +
                         '                TO_CHAR(PS.WB_CAN_PHLE_DATE,\'YYYY/MM/DD\') WB_CAN_PHLE_DATE,\n' +
                         '                TO_CHAR(PS.MA_CAN_PHLE_DATE,\'YYYY/MM/DD\') MA_CAN_PHLE_DATE\n' +
-                        'FROM   NBSSS.DNR_PERSON@DL_NBSSS P,\n' +
-                        '       NBSSS.DNR_PSN_STATE@DL_NBSSS PS\n' +
+                        'FROM   NBSSS.DNR_PERSON@'+wxconfig.datalink+' P,\n' +
+                        '       NBSSS.DNR_PSN_STATE@'+wxconfig.datalink+' PS\n' +
                         'WHERE  P.PSN_SEQ = PS.PSN_SEQ\n' +
                         ' AND   P.IDCARD = :IDCARD\n',
                         [certNumn]
@@ -138,10 +137,10 @@ var donBldAppointDao = {
                     let result = await conn.execute(" SELECT TO_CHAR(PS.WB_CAN_PHLE_DATE,'YYYY/MM/DD') WB_CAN_PHLE_DATE,\n" +
                         "        TO_CHAR(PS.MA_CAN_PHLE_DATE,'YYYY/MM/DD') MA_CAN_PHLE_DATE,\n" +
                         "        PS.PSN_SEQ\n" +
-                        "  FROM  NBSSS.DNR_PSN_STATE@DL_NBSSS PS\n" +
+                        "  FROM  NBSSS.DNR_PSN_STATE@"+wxconfig.datalink+" PS\n" +
                         " WHERE PS.PSN_SEQ = ( \n" +
                         " SELECT DISTINCT PC.PSN_SEQ \n" +
-                        "   FROM NBSSS.DNR_PSN_CERTIFICATE@DL_NBSSS PC \n" +
+                        "   FROM NBSSS.DNR_PSN_CERTIFICATE@"+wxconfig.datalink+" PC \n" +
                         "  WHERE PC.CERT_TYPE_SEQ = :TYPE\n" +
                         "   AND  PC.CERTIFICATE_NBR = :NUM)",
                         [certType,certNumn]
@@ -152,6 +151,7 @@ var donBldAppointDao = {
                         resolve(rowsData.toMap(result.metaData,result.rows));
                     }
                 }
+
             } catch (err) { // catches errors in getConnection and the query
                 reject(err);
             } finally {
@@ -167,16 +167,10 @@ var donBldAppointDao = {
     },
     //验证用户是否已经预约
     isAlreadyAppoint:function(isIdcard,certType,certNumn,appDate) {
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "nbsss",
-                    password      : "a123456",
-                    connectString : "192.168.1.16:1521/nbsss"
-                });
-
+                conn = await  connPool.getNbsssConn();
                 let db_psn_seq = '';
                 //如果身份证
                 if(isIdcard){
@@ -224,97 +218,92 @@ var donBldAppointDao = {
     },
     //根据location_type加载区域
     getLocationByType:function (res,locationType) {
-        var oracledb = require('oracledb');
-        oracledb.getConnection(
-            {
-                user: 'zibowx',
-                password: 'zibowx',
-                connectString: '192.168.1.51:1521/spda'
-            },
-            function (err, connection) {
-                if (err) {
-                    console.error(err.message);
-                    return;
-                }
-                connection.execute('select dpl.location_seq,\n' +
-                    '       dpl.location_name,\n' +
-                    '       dpl.location_type,\n' +
-                    '       r.location_name region_name,\n' +
-                    '       ld.opening_hours,\n' +
-                    '       ld.img_path,\n' +
-                    '       ld.exact_address,\n' +
-                    '       ld.lng,\n' +
-                    '       ld.lat,\n' +
-                    '       ldt.type_id,\n' +
-                    '       ldt.type_desc,\n' +
-                    '       (select wmsys.wm_concat(\'\'\'\' || ls.icon_path || \'\'\'\') \n' +
-                    '       from wx_location_service ls\n' +
-                    '       where ls.service_id in (select sdr.service_id \n' +
-                    '       from wx_service_detail_relation sdr \n' +
-                    '       where sdr.detail_id = ld.id)) as services       \n' +
-                    'from WX_DNR_PHLE_LOCATION dpl,\n' +
-                    '     WX_LOCATION_DETAIL ld,\n' +
-                    '     WX_REGION r,\n' +
-                    '     WX_LOCATION_DON_TYPE ldt\n' +
-                    'where dpl.location_seq = ld.location_seq\n' +
-                    '  and dpl.location_type = r.location_id\n' +
-                    '  and ld.type_id = ldt.type_id\n' +
-                    '  and dpl.location_type = :LOC_TYPE',
-                    [locationType],
-                    function (err, result) {
-                        if (err) {
-                            console.error(err.message);
-                            let resBody = {
-                                status : 10017,
-                                message:'加载数据失败'
-                            }
-                            res.send(resBody);
-                            return
-                        }
-                        //直接向应给客户端
-                        var data_cus =rowsData.toMap(result.metaData,result.rows);
-                        let resBody ={
-                            status :200,
-                            message:"ok",
-                            data:data_cus
+        connPool.getZibowxConn().then((connection)=>{
+            connection.execute('select dpl.location_seq,\n' +
+                '       dpl.location_name,\n' +
+                '       dpl.location_type,\n' +
+                '       r.location_name region_name,\n' +
+                '       ld.opening_hours,\n' +
+                '       ld.img_path,\n' +
+                '       ld.exact_address,\n' +
+                '       ld.lng,\n' +
+                '       ld.lat,\n' +
+                '       ldt.type_id,\n' +
+                '       ldt.type_desc,\n' +
+                '       (select wmsys.wm_concat(\'\'\'\' || ls.icon_path || \'\'\'\') \n' +
+                '       from wx_location_service ls\n' +
+                '       where ls.service_id in (select sdr.service_id \n' +
+                '       from wx_service_detail_relation sdr \n' +
+                '       where sdr.detail_id = ld.id)) as services       \n' +
+                'from WX_DNR_PHLE_LOCATION dpl,\n' +
+                '     WX_LOCATION_DETAIL ld,\n' +
+                '     WX_REGION r,\n' +
+                '     WX_LOCATION_DON_TYPE ldt\n' +
+                'where dpl.location_seq = ld.location_seq\n' +
+                '  and dpl.location_type = r.location_id\n' +
+                '  and ld.type_id = ldt.type_id\n' +
+                '  and dpl.location_type = :LOC_TYPE',
+                [locationType],
+                function (err, result) {
+                    if (err) {
+                        console.error(err.message);
+                        let resBody = {
+                            status : 10017,
+                            message:'加载数据失败'
                         }
                         res.send(resBody);
-                        if(connection){
-                            connection.close();
-                        }
-                    });
-            });
+                        return
+                    }
+                    //直接向应给客户端
+                    var data_cus =rowsData.toMap(result.metaData,result.rows);
+                    let resBody ={
+                        status :200,
+                        message:"ok",
+                        data:data_cus
+                    }
+                    res.send(resBody);
+                    if(connection){
+                        connection.close((err) => {
+                            if (err) {
+                                console.error(err);
+                            }
+                        });
+                    }
+                });
+        }).catch((err)=>{
+            console.error(err);
+            let resBody = {
+                status : 10017,
+                message:'加载数据失败'
+            }
+            res.send(resBody);
+            return
+        })
     },
     //加载学历、民族、职业
     getEduNationProf:()=>{
-            var oracledb = require('oracledb');
             return new Promise(async function(resolve, reject) {
                 let conn;
-
                 try {
-                    conn = await oracledb.getConnection({
-                        user          : "zibowx",
-                        password      : "zibowx",
-                        connectString : "192.168.1.51:1521/spda"
-                    });
+                    conn = await  connPool.getZibowxConn();
                     //定义数组
                     var dataArray = new Array();
                     //查询学历
-                    let resultEdu = await conn.execute('SELECT DE.EDUCATION_SEQ,DE.EDUCATION_NAME FROM NBSSS.DNR_EDUCATION@DL_NBSSS DE WHERE ACTIVE = 1');
+                    let resultEdu = await conn.execute('SELECT DE.EDUCATION_SEQ,DE.EDUCATION_NAME FROM NBSSS.DNR_EDUCATION@'+wxconfig.datalink+' DE WHERE ACTIVE = 1');
                     if(false == resultEdu.rows){
                       console.log("加载出的学历为空！");
                     }else{
                         dataArray[0] =  rowsData.toMap(resultEdu.metaData,resultEdu.rows);
                     }
                     //查询民族
-                    let resultNation = await conn.execute('SELECT NN.NATION_SEQ,NN.NATION_NAME  FROM NBSSS.DNR_NATION@DL_NBSSS NN ');
+                    let resultNation = await conn.execute('SELECT NN.NATION_SEQ,NN.NATION_NAME  FROM NBSSS.DNR_NATION@'+wxconfig.datalink+' NN ');
                     if(false == resultNation.rows){
                         console.log("加载出的民族为空！");
                     }else{
                         dataArray[1] =  rowsData.toMap(resultNation.metaData,resultNation.rows);
                     }
                     //加载职业
-                    let resultProfession = await conn.execute('SELECT  DP.PROFESSION_SEQ,DP.PROFESSION_NAME FROM NBSSS.DNR_PROFESSION@DL_NBSSS DP WHERE DP.ACTIVE =1 ');
+                    let resultProfession = await conn.execute('SELECT  DP.PROFESSION_SEQ,DP.PROFESSION_NAME FROM NBSSS.DNR_PROFESSION@'+wxconfig.datalink+' DP WHERE DP.ACTIVE =1 ');
                     if(false == resultNation.rows){
                         console.log("加载出的学历为空！");
                     }else{
@@ -340,17 +329,12 @@ var donBldAppointDao = {
         var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
-
             try {
-                conn = await oracledb.getConnection({
-                    user          : "zibowx",
-                    password      : "zibowx",
-                    connectString : "192.168.1.51:1521/spda"
-                });
+                conn = await  connPool.getZibowxConn();
                 //定义数组
                 var dataArray = new Array();
                 //查询证件类型
-                let resultCertTypes = await conn.execute('SELECT DCT.CERT_TYPE_SEQ,DCT.CERTIFICATE_NAME FROM NBSSS.DNR_CERTIFICATE_TYPE@DL_NBSSS DCT WHERE DCT.ACTIVE = 1');
+                let resultCertTypes = await conn.execute('SELECT DCT.CERT_TYPE_SEQ,DCT.CERTIFICATE_NAME FROM NBSSS.DNR_CERTIFICATE_TYPE@'+wxconfig.datalink+' DCT WHERE DCT.ACTIVE = 1');
                 if(false == resultCertTypes.rows){
                     console.log("加载出的证件类型！");
                 }else{
@@ -373,18 +357,11 @@ var donBldAppointDao = {
     },
     //向数据库插入预约信息
     insertAppointInfo : (appointInfo)=>{
-        var oracledb = require('oracledb');
-        //console.log("hahahhah"+appointInfo.isFirst+"===="+appointInfo.certType == appointInfo.idcardSeq)
+        var oracledb = require("oracledb");
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "nbsss",
-                    password      : "a123456",
-                    connectString : "192.168.1.16:1521/nbsss"
-                });
-
-
+                conn = await  connPool.getNbsssConn();
                 //如果是第一次献血并且未使用身份证
                 if(appointInfo.isFirst && appointInfo.certType != appointInfo.idcardSeq ) {
                     let  d_psn_seq = '';
@@ -392,6 +369,7 @@ var donBldAppointDao = {
                     //查询该献血者信息是否已经存在
                     let resCertSeq = await conn.execute("select psn_seq from DNR_PSN_CERTIFICATE t where cert_type_seq = :certType and certificate_nbr = :certNbr",
                         [appointInfo.certType,appointInfo.idcard]);
+
 
                     if(resCertSeq.rows == false){
                         //向dnr_person插入数据
@@ -447,8 +425,6 @@ var donBldAppointDao = {
                                 p_group_seq: '',
                             }
                         );
-
-
                         //得到psn_seq
                         d_psn_seq = result_person.outBinds.ret;
                         console.log("psn_seq："+d_psn_seq)
@@ -548,8 +524,13 @@ var donBldAppointDao = {
                             reject(err);
                         }
                     });
+
+                    let reObj = {
+                        d_psn_seq : d_psn_seq,
+                        d_recruit_seq : d_recruit_seq
+                    }
                     //返回recruit提供给日后查询
-                    resolve(d_recruit_seq);
+                    resolve(reObj);
 
                 }
                 //第一次献血且使用身份证
@@ -699,7 +680,12 @@ var donBldAppointDao = {
                         }
                     });
                     //返回结果
-                    resolve(d_recruit_seq);
+                    let reObj = {
+                        d_psn_seq : d_psn_seq,
+                        d_recruit_seq : d_recruit_seq
+                    }
+                    //返回recruit提供给日后查询
+                    resolve(reObj);
                 }
                 //不是第一次献血
                 if(!appointInfo.isFirst){
@@ -790,10 +776,15 @@ var donBldAppointDao = {
                         }
                     });
                     //返回结果
-                    resolve(d_recruit_seq);
+                   let reObj = {
+                        d_psn_seq : d_psn_seq,
+                        d_recruit_seq : d_recruit_seq
+                    }
+                    //返回recruit提供给日后查询
+                    resolve(reObj);
                 }
             } catch (err) { // catches errors in getConnection and the query
-                console.log("一度陷入对自己智商的怀疑当中:"+err)
+                console.log("异常来自donAppointDao-insertAppointInfo:"+err)
                 conn.rollback((r_err)=>{
                     reject(err);
                 })
@@ -809,19 +800,14 @@ var donBldAppointDao = {
             }
         });
     },
+
     //查询我的预约记录根据psn_seq
     getAppointRecordByPsnseq : (psn_seq)=>{
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "nbsss",
-                    password      : "a123456",
-                    connectString : "192.168.1.16:1521/nbsss"
-                });
-
-                let resultEdu = await conn.execute('                    SELECT R.RECRUIT_SEQ, \n' +
+                conn = await  connPool.getNbsssConn();
+                let resultEdu = await conn.execute('SELECT R.RECRUIT_SEQ, \n' +
                     '                           R.PSN_SEQ,\n' +
                     '                           R.LOCATION_SEQ,\n' +
                     '                           P.LOCATION_NAME,\n' +
@@ -836,9 +822,8 @@ var donBldAppointDao = {
                     '                       AND P.LOCATION_SEQ = R.LOCATION_SEQ\n' +
                     '                       AND R.PSN_SEQ = :PSN_SEQ\n' +
                     '                  ORDER BY CREATE_DATE DESC ',
-                    [psn_seq]);
+                    [parseInt(psn_seq)]);
                 console.log(JSON.stringify(resultEdu))
-
                 if(false == resultEdu.rows){
                     console.log("预约数据为空");
                 }else{
@@ -859,16 +844,10 @@ var donBldAppointDao = {
     },
     //查询我的预约记录根据recruit_seq
     getAppointRecordByRecruitSeq : (recruit_seq)=>{
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "nbsss",
-                    password      : "a123456",
-                    connectString : "192.168.1.16:1521/nbsss"
-                });
-
+                conn = await  connPool.getNbsssConn();
                 let resultEdu = await conn.execute('\n' +
                     'SELECT R.RECRUIT_SEQ,\n' +
                     '       R.PSN_SEQ,\n' +
@@ -906,17 +885,12 @@ var donBldAppointDao = {
     },
     //取消预约
     cancelAppoint : (recruit_seq)=>{
-        var oracledb = require('oracledb');
+        let oracledb =  require("oracledb");
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "nbsss",
-                    password      : "a123456",
-                    connectString : "192.168.1.16:1521/nbsss"
-                });
-
-                    //插入recruit_record表
+                conn = await  connPool.getNbsssConn();
+                //插入recruit_record表
                     let result_recu_record = await conn.execute("begin\n" +
                         "  :ret := a_recruit.save_dnr_recruit_record(:p_record_seq,\n" +
                         "                                               :p_recruit_seq,\n" +
@@ -971,16 +945,10 @@ var donBldAppointDao = {
     },
     //根据locationSeq加载地址
     loadAddressByLocSeq : (locSeq)=>{
-        var oracledb = require('oracledb');
         return new Promise(async function(resolve, reject) {
             let conn;
             try {
-                conn = await oracledb.getConnection({
-                    user          : "zibowx",
-                    password      : "zibowx",
-                    connectString : "192.168.1.51:1521/spda"
-                });
-
+                conn = await  connPool.getZibowxConn();
                 let resultEdu = await conn.execute('  \n' +
                     ' SELECT  LD.EXACT_ADDRESS\n' +
                     '  FROM WX_LOCATION_DETAIL  LD\n' +
@@ -1011,12 +979,7 @@ var donBldAppointDao = {
     return new Promise(async function(resolve, reject) {
         let conn;
         try {
-            conn = await oracledb.getConnection({
-                user          : "nbsss",
-                password      : "a123456",
-                connectString : "192.168.1.16:1521/nbsss"
-            });
-
+            conn = await  connPool.getNbsssConn();
             let resultEdu = await conn.execute('SELECT P.PSN_SEQ,\n' +
                 '                           P.PSN_NAME,\n' +
                 '                           (select CERT_TYPE_SEQ from DNR_CERTIFICATE_TYPE WHERE CERTIFICATE_NAME = \'身份证\') CERT_TYPE,\n' +
@@ -1061,6 +1024,5 @@ var donBldAppointDao = {
     });
 },
 }
-
 
 module.exports=donBldAppointDao;

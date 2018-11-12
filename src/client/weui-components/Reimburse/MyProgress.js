@@ -1,6 +1,6 @@
 import React from 'react';
 // import { Progress, Page } from 'react-weui';
-import { Progress, Button, WingBlank, WhiteSpace } from 'antd-mobile';
+import { Progress, WingBlank, WhiteSpace } from 'antd-mobile';
 
 class MyProgress extends React.Component {
     constructor(props) {

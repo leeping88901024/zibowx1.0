@@ -28,7 +28,7 @@ passport.use(new localStrategy(
                 let user = {
                     userid: result.rows[0][0]
                 }
-                console.log('here ....')
+                // console.log('here ....')
                 return done(null, user);
             }
         )

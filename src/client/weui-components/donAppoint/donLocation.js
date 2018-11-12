@@ -152,6 +152,7 @@ class AppointLocation extends React.Component {
                                                     <img style={{width:'2.8vw',height:'2.5vh'}} src="src/client/img/mapMaker.png"/>
                                                     <span style={{marginLeft:'4px'}} > {JSON.parse(item).EXACT_ADDRESS}</span>
                                                 </div>
+                                                {/*
                                                 <div >
                                                     {JSON.parse(item).SERVICES != null ?
                                                         JSON.parse(item).SERVICES.substring(0,JSON.parse(item).SERVICES.length).split(",").map((service,i)=>{
@@ -159,6 +160,7 @@ class AppointLocation extends React.Component {
                                                         }) : null
                                                     }
                                                 </div>
+                                                */}
                                             </div>
                                             <div  style={{fontSize:'12px',color:'#91FF2E',display:'block',marginTop:'4px'}}>
                                                 <a style={{textAlign:'center',display:'inline-block',color:'#FFFFFF',width:'15vw',height:'3vh',backgroundColor:'#1AAD19'}} href={"/donBldAppoint?donLocSeq="+JSON.parse(item).LOCATION_SEQ+"&donLocName="+JSON.parse(item).LOCATION_NAME+"&donTypeId="+JSON.parse(item).TYPE_ID+"&donTypeDesc="+JSON.parse(item).TYPE_DESC}>预约</a>

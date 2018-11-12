@@ -722,6 +722,10 @@ class DonBldDetailInfo extends React.Component {
                 if(responseJson.status == 200){
                     window.location.href = "/appointSucess";
                 }else if(responseJson.status == 10014){
+                    this.setState({
+                        showAndroid1: true,
+                        dialogMes:responseJson.message,
+                    });
                     window.location.href = "/locationNavigation";
                 } else{
                     //启用按钮
@@ -933,7 +937,6 @@ class AppointSucess extends React.Component {
 
     //取消预约按钮被点击
     cancelAppoint = (recSeq)=>{
-        alert(this.state.currRecruitSeq);
         fetch('/public/donAppoint/cancelAppoint',
             {credentials: "include", method: "POST",
                 headers:{'Content-Type': 'application/json'},
@@ -942,7 +945,30 @@ class AppointSucess extends React.Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 if(responseJson.status === 200){
-                    window.location.href = "/myAppointRecord";
+                    fetch('/public/donAppoint/getAppointRecd',{credentials: "include"})
+                        .then((response) => response.json())
+                        .then((responseJson) => {
+                            if(responseJson.status === 200){
+                                console.log(responseJson.data);
+                                let records = new Array();
+                                responseJson.data.map((item,i)=>{
+                                    item = JSON.parse(item);
+                                    records = records.concat(item);
+
+                                });
+                                this.setState({
+                                    appointRecords :records
+                                });
+                            }else{
+                                this.setState({
+                                    showAndroid1: true,
+                                    dialogMes:responseJson.message,
+                                });
+                            }
+                        }).catch(function(error){
+                        console.log("加载预约记录失败"+error)
+                    })
+                   // window.location.href = "/myAppointRecord";
                 }else{
                     this.setState({
                         showAndroid1: true,

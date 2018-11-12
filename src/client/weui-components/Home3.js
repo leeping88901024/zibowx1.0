@@ -4,7 +4,7 @@ import { Layout, Menu, Icon, Dropdown, Avatar } from 'antd';
 import styles from './RightContent.less';
 import headerstyles from './Header.css';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
 class Home3 extends React.Component {

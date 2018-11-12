@@ -40,11 +40,10 @@ class Question extends React.Component {
                 <FormCell checkbox key={x[0]}>
                         <CellHeader>
                             <Checkbox 
-                              // 用它的name属性保存题目的类型
-                              name={x[3]} 
+                              // 是否本题正确答案 + 选项编号
+                              name={x[0]} 
                               onChange={this.props.handleClick}
-                              //question_type={this.props.question_type}
-                              value={x[2]} />
+                              value={`${x[3]}${x[2]}`} />
                         </CellHeader>
                         <CellBody>{x[1]}</CellBody>
                 </FormCell>

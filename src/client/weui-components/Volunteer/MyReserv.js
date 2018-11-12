@@ -1,7 +1,7 @@
 import React from 'react';
 import { Preview, PreviewHeader, PreviewBody, 
     PreviewItem, PreviewFooter,
-    PreviewButton, CellsTitle, Panel, 
+    PreviewButton, Panel, 
     PanelHeader, PanelBody, Dialog  } from 'react-weui';
 
 class MyReserv extends React.Component {

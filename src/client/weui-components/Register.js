@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Button, Select, Row, Col, Popover, Progress } from 'antd';
+import { Form, Input, Button, Select, Popover, Progress } from 'antd';
 import { Link  } from 'react-router-dom';
 import SHA2 from './Volunteer/verifyFunc/sha1';
 

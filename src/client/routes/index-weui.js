@@ -7,14 +7,12 @@ import {
     Redirect
 } from 'react-router-dom';
 
-import Regist from '../weui-components/user/Login'
+import {Regist,DonorAuthByDonId} from '../weui-components/user/Login'
 import {RequestWxAuth,AutoLogin} from '../weui-components/user/autoLogin'
 import AppointLocation from '../weui-components/donAppoint/donLocation';
 import {DonBldConsult,DonBldDetailInfo,AppointSucess,MyAppointRecord} from '../weui-components/donAppoint/donBldAppoint';
-import {DonBldAuth} from '../weui-components/BldRepay/BldRepay';
 import {QueryTestResult,TestResult} from '../weui-components/testResult/testResult';
 import {QueryDonRecord,DonRecord} from '../weui-components/donRecord/donRecord';
-import {WxArticleLook} from "../weui-components/articleLook/articlesLook"
 import {AdminUploadMaterial,AdminArticlesList,AdminWxArticlesEdit,AdminWxArticlesLook,AdminPerMaterialsList}  from "../weui-components/admin/upload_material"
 import {commonModule} from "../weui-components/publicModule/publicModule";
 import {AdminLocationSetting,AdminLocationList} from "../weui-components/admin/sysSetting"
@@ -65,12 +63,11 @@ class WeuiRoute extends React.Component {
                     <Route path="/myAppointRecord" component={Private(MyAppointRecord)}/>
                     <Route path="/donBldDetailInfo" component={DonBldDetailInfo}/>
                     <Route path="/appointSucess" component={AppointSucess} />
-                    <Route path="/donBldAuth" component={DonBldAuth} />
                     <Route path="/queryTestResult" component={Private(QueryTestResult)} />
                     <Route path="/testResult" component={Private(TestResult)} />
                     <Route path="/queryDonRecord" component={Private(QueryDonRecord)} />
                     <Route path="/donRecord" component={Private(DonRecord)} />
-                    <Route path="/wxArticleLook" component={WxArticleLook} />
+                    <Route path="/donorAuthByDonId" component={DonorAuthByDonId} />
                     {/*后台管理 */}
                     <Route path="/admin_uploadMaterial" component={AdminUploadMaterial} ></Route>
                     <Route path="/admin_articlesList" component={AdminArticlesList} ></Route>

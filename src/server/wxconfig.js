@@ -10,5 +10,7 @@ module.exports = {
     //前端服务器
     ui_domain : 'http://wx.www.ladytang.com',
     //微信文章阅读地址
-    articlelook_url : 'http://wx.www.ladytang.com/wxArticleLook'
+    articlelook_url : 'http://wx.www.ladytang.com/wxArticleLook',
+    //数据库链接
+    datalink : 'DL_FZ'
 }
