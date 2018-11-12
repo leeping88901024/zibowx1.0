@@ -2,10 +2,11 @@ import React from 'react';
 import { Panel, PanelHeader, PanelBody, Form, FormCell, Label, 
     CellBody, Select, CellHeader,Preview, PreviewHeader, 
     PreviewItem, PreviewBody, Cell, Uploader, CellsTitle, Input, 
-    Dialog, CityPicker, ButtonArea, Button, Gallery, GalleryDelete  } from 'react-weui';
+    Dialog, CityPicker, ButtonArea, Button, Gallery, GalleryDelete, Toast  } from 'react-weui';
 import checkChinese from '../Volunteer/verifyFunc/chinese';
 import cnCity from '../Volunteer/cnCity';
 import luhnCheck from '../Volunteer/verifyFunc/luhnCheck';
+import LZString from 'lz-string';
 
 class ReimburseForm extends React.Component {
     constructor(props) {
@@ -60,7 +61,9 @@ class ReimburseForm extends React.Component {
             },
             show_content: '',
 
-            isother: false
+            isother: false,
+
+            showToast: false
 
         }
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -233,26 +236,14 @@ class ReimburseForm extends React.Component {
   
         };
 
-        // console.log(file.data);
-        // console.log(file.data.length);
-        // 595790
-        // var compressed = LZString.compress(file.data);
-        // console.log(compressed);
-        // console.log(compressed.length);
+        // 压缩了必须的字段，可谓 null 的没有进行压缩 - 过多的压缩会变慢
 
-        // var original = LZString.decompress(compressed);
-        // console.log(original);
-        // console.log(original.length);
-        // var str = LZString
-        // 在此处对图片进行压缩
-
-        // console.log(LZString.compress(this.state.idcardImg1[0].url));
-        // return;
+        this.setState({showToast: true});
 
         let data2 = Object.assign({},data,{
-            idcardImg1url: this.state.idcardImg1[0].url,
-            idcardImg2url: this.state.idcardImg2[0].url,
-            handleIdcardImg: this.state.handleIdcardImg[0].url,
+            idcardImg1url: this.state.idcardImg1[0].url, // 身份证正面
+            idcardImg2url: this.state.idcardImg2[0].url, // 身份证背面
+            handleIdcardImg: this.state.handleIdcardImg[0].url, //手持身份证
             // 住院发票 多张（大于1张小于5张）
             inpatientInvoiceImg: this.state.inpatientInvoiceImg[0].url,
             inpatientInvoiceImg2: this.state.inpatientInvoiceImg[1] || {url: 'null'},
@@ -273,14 +264,12 @@ class ReimburseForm extends React.Component {
         // 本人置空字段
         if(this.state.values.relation == 1) {
             // console.log(data2);
-            data2.bloodusername = '';
-            data2.proofofrelationImg = {url: 'null'};
+            data2.bloodusername = ''; // 用血者姓名
+            data2.proofofrelationImg = {url: 'null'}; // 亲属关系证明材料
             data2.proofofrelationImg2 = {url: 'null'};
             data2.proofofrelationImg3 = {url: 'null'};
             data2.proofofrelationImg4 = {url: 'null'};
         }
-
-
         // post 存到数据库
         fetch('/db/add_reimburse',{
             method: 'post',
@@ -291,9 +280,10 @@ class ReimburseForm extends React.Component {
             .then(json => {
                 var { msg } = json;
                 console.log(msg);
-            }));
+                this.setState({showToast: false});
 
-        this.clickHander('/reimbursesuccess');
+                this.clickHander('/reimbursesuccess');
+            }));
 
     }
 
@@ -727,6 +717,7 @@ class ReimburseForm extends React.Component {
                             {this.state.show_content}
                         </div>
                     </Dialog>
+                    <Toast icon="loading" show={this.state.showToast}>正在提交...</Toast>
                 </Panel>
             </div>
         )

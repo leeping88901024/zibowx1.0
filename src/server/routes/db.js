@@ -2,6 +2,7 @@ var router = require('express').Router();
 var oracledb = require('oracledb');
 var dbconfig = require('../config/dbconfig');
 var getAbsTime  = require('../utils/time');
+var LZString = require('lz-string');
 
 router.get('/locations', (req, res) => {
     db.execute(
@@ -664,15 +665,15 @@ router.post('/add_reimburse', (req, res) => {
         bankname: data.bankname,
         branchname: data.branchname,
         city: data.city,
-        idcardimg1url: data.idcardImg1url,
-        idcardimg2url: data.idcardImg2url,
+        idcardimg1url: data.idcardImg1url, // 身份证正面
+        idcardimg2url: data.idcardImg2url, // 身份证背面
         name: data.name,
         telphone: data.telphone,
         idcard: data.idcard,
         psn_seq: data.psnseq,
         user_id: userid,
-        handleidcard: data.handleIdcardImg,
-        inpatientInvoice: data.inpatientInvoiceImg,// 标识不可空
+        handleidcard: data.handleIdcardImg, // 手持身份证
+        inpatientInvoice: data.inpatientInvoiceImg, // 标识不可空
         inpatientInvoice2: data.inpatientInvoiceImg2.url, // 标识可以为空
         inpatientInvoice3: data.inpatientInvoiceImg3.url,
         inpatientInvoice4: data.inpatientInvoiceImg4.url,
