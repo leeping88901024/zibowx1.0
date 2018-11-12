@@ -1,8 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Layout, Menu, Icon, Dropdown, Avatar } from 'antd';
  import { withRouter } from 'react-router-dom';
 import styles from './RightContent.less';
 import headerstyles from './Header.css';
+import logo from '../img/logo.svg';
 
 const { Header, Content, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -60,7 +62,12 @@ class Home3 extends React.Component {
           collapsible
           collapsed={this.state.collapsed}
         >
-          <div className="logo" />
+          <div className="logo" >
+            <Link to="/">
+              <img src={logo} alt="logo" />
+              <h1>用户管理系统</h1>
+            </Link>
+          </div>
           <Menu theme="light" mode="inline" defaultSelectedKeys={['1']} onClick={this.handleMenuClick}>
             <Menu.Item key="/testhome3">
                 <Icon type="file" />
@@ -102,26 +109,26 @@ class Home3 extends React.Component {
                     }}>
                       <Avatar style={{
                         //height: '64px',
-                        lineHeight: '58px',
+                        //lineHeight: '60px',
                         verticalAlign: 'center',
                         display: 'inline-block',
-                        //padding: '0 0 0 24px',
+                        color: '#f56a00',
+                        backgroundColor: '#fde3cf',
                         cursor: 'pointer',
-                        fontSize: '20px'
+                        fontSize: '15px',
+                        paddingRight: '15px'
                       }}
-                        size="large"
+                        size="default"
                         className={styles.avatar}
-                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
                         alt="avatar"
-                      />
+                      >A</Avatar>
                       <span style={{
                         fontSize: '15px',
-                        height: '64px',
+                        height: '60px',
                         cursor: 'pointer',
                         verticalAlign: 'center',
-                        transition: 'all 0.3s, padding 0s',
-                        padding: '10px 14px 0 0',
-                      }}>admin</span>
+                        transition: 'all 0.3s, padding 0s'
+                      }}>Adminstrator</span>
                     </span>
                   </Dropdown>
                 ) : (

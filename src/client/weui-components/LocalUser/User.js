@@ -175,10 +175,12 @@ class User extends React.Component {
                       type="primary">创建用户</Button>
                 </UserModal>
                 <Table
+                  scroll
+                  size="small"
                   columns={columns}
                   dataSource={this.state.userDataSource}
                   rowKey={record => record.id}
-                  pagination={false} />
+                  />
             </Home3>
         )
     }

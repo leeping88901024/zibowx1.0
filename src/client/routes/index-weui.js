@@ -44,6 +44,7 @@ import 'moment/locale/zh-cn';
 import TestHome2 from '../weui-components/Volunteer/TestHome2';
 import TestHome3 from '../weui-components/Volunteer/TestHome3';
 import User from '../weui-components/LocalUser/User';
+import UpdateExamination from '../weui-components/Volunteer/UpdateExamination';
 
 
 import {LoadMore} from "react-weui";
@@ -79,6 +80,7 @@ class WeuiRoute extends React.Component {
                     {/* <Route path="/admin_login" component={AdminLogin} ></Route> */}
 
                     {/*志愿者*/}
+                    <Route path='/updateexamination' component={ UpdateExamination } />
                     <Route path='/updateperiod' component={ UpdatePeriod } />
                     <Route path='/localusers' component={ User } />
                     <Route path='/my/reimburseprogress' component={ MyProgress } />

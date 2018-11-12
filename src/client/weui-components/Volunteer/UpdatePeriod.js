@@ -200,27 +200,26 @@ class UpdatePeriod extends React.Component {
           
         return (
             <Home2>
-                <div>
+                <div className="components-table-demo-control-bar">
                     <div>
                         <div>
-                        <PeriodModel record={{}} onOk={this.createHandler}>
-                            <Button type="primary">创建</Button>
-                        </PeriodModel>
-                        <Select
-                            style={{ width: '50%', margin: '0px 0px 10px 50px' }}
-                            placeholder="请选择采血点过滤"
-                            onChange={this.handleSelectorChange}
-                            >
-                            {selectComponent}
-                        </Select>
+                            <PeriodModel record={{}} onOk={this.createHandler}>
+                                <Button type="primary">创建</Button>
+                            </PeriodModel>
+                            <Select
+                                style={{ width: '50%', margin: '0px 0px 10px 50px' }}
+                                placeholder="请选择采血点过滤"
+                                onChange={this.handleSelectorChange}
+                                >
+                                {selectComponent}
+                            </Select>
                         </div>
                     </div>
                     <Table
-                    //loading={loading}
                     columns={columns}
                     dataSource={this.state.filteredData}
                     rowKey={record => record.id}
-                    pagination={false} 
+                    size='small'
                     />
                 </div>
         </Home2>
