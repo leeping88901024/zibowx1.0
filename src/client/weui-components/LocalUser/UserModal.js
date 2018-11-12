@@ -63,8 +63,9 @@ class UserModal extends React.Component {
     }
 
     checkMail = (rule, value, callback) => {
-        //const { form } = this.props;
-        //console.log(value);
+        if ('mail' in this.props.record) {
+            callback();
+        }
         let data = {
             mail: value
         }
