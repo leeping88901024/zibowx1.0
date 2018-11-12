@@ -38,10 +38,10 @@ class ReimburseForm extends React.Component {
             // 提交内容1
             values: {
                 relation: 1, // 与用血者关系
-                account: '李平',  // 开户人
+                account: '',  // 开户人
                 bankaccount: '',  // 银行账号
-                bankname: '建设银行', // 开户行名称
-                branchname: '世纪城支行', // 开户支行
+                bankname: '', // 开户行名称
+                branchname: '', // 开户支行
                 bloodusername: '' //非本人-用血者姓名
 
             },
