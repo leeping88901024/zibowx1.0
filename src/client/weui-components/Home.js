@@ -78,12 +78,12 @@ class  Home extends React.Component {
             href: 'javascript:;',
             onClick: this.clickHander.bind(this,'/my/reimburse')
         },
-        {
-            icon: <img src={iconReimburse} />,
-            label: '登录',
-            href: 'javascript:;',
-            onClick: this.clickHander.bind(this,'/login')
-        },
+        // {
+        //     icon: <img src={iconReimburse} />,
+        //     label: '登录',
+        //     href: 'javascript:;',
+        //     onClick: this.clickHander.bind(this,'/login')
+        // },
         {
             icon: <img src={iconyuyue} />,
             label: '献血预约',

@@ -1,4 +1,4 @@
-const express = require('express');
+var express = require('express');
 var  session= require('express-session');
 var bodyParser = require('body-parser');
 require('body-parser-xml')(bodyParser);
@@ -17,13 +17,14 @@ var sysSetting  = require('./admin/sysSettingController');
 // var adminLogin = require("./admin/adminLoginController")
 /*志愿者*/
 var passport = require('passport');
-var loginwx = require('./routes/loginwx');
+// var loginwx = require('./routes/loginwx');
 var dbrouter = require('./routes/db');
-var wxreply = require('./routes/reply');
+// var wxreply = require('./routes/reply');
 var login = require('./routes/login');
-var aliyunsms = require('./routes/sms');
+// var aliyunsms = require('./routes/sms');
 
-const app = express();
+var app = express();
+
 
 app.use(express.static('dist'));
 
@@ -52,23 +53,24 @@ app.use(bodyParser.xml({
     }
 }));
 
-app.use('*',(req,res,next) => {
+/* 测试使用，不可删！
+ app.use('*',(req,res,next) => {
     if(req.session.userid == null) {
             req.session.user = {openid: 'o4loR1f5jHz2b-Fg5xiemyh44sag'};
     }
     next();
-});
+}); */
 
 // 本地登录
 app.use('/loginlocal', login);
 
-app.use('/loginwx',loginwx);
+// app.use('/loginwx',loginwx);
 
 app.use('/db',dbrouter);
 
-app.use('/reply',wxreply);
+// app.use('/reply',wxreply);
 
-app.use('/sms', aliyunsms);
+// app.use('/sms', aliyunsms);
 
 /*
 app.get('*',(req,res) => {
