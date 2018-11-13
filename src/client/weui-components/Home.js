@@ -148,7 +148,7 @@ class  Home extends React.Component {
          .then(json => {
              // console.log(`the user info is ${json.userinfo}`);
              if(!json.userinfo) {
-                 // this.props.history.push('/requestWxAuth?comeFromRouter=/home');
+                 this.props.history.push('/requestWxAuth?comeFromRouter=/home');
                  return;
              }
              // 用户显示个人信息

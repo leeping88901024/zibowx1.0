@@ -61,6 +61,14 @@ app.use(bodyParser.xml({
     next();
 }); */
 
+// 测试使用，不可删！
+ app.use('*',(req,res,next) => {
+    if(req.session.userid == null) {
+            req.session.user = {openid: 'o4loR1f5jHz2b-Fg5xiemyh44sag'};
+    }
+    next();
+});
+
 // 本地登录
 app.use('/loginlocal', login);
 
