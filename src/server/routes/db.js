@@ -68,7 +68,7 @@ router.get('/profession', (req, res) => {
     db.execute(
         `select t.profession_seq,
          t.profession_name
-         from NBSSS.DNR_PROFESSION@DL_NBSSS t
+         from DNR_PROFESSION t
          where t.active = 1`,
         (err,result) => {
             res.send(result.rows)
@@ -80,7 +80,7 @@ router.get('/education', (req, res) => {
     db.execute(
         `select t.education_seq,
          t.education_name 
-         from NBSSS.DNR_EDUCATION@DL_NBSSS t
+         from DNR_EDUCATION t
          where t.active = 1`,
         (err,result) => {
             res.send(result.rows)
@@ -92,7 +92,7 @@ router.get('/nation', (req, res) => {
     db.execute(
         `select t.nation_seq,
          t.nation_name 
-         from NBSSS.DNR_NATION@DL_NBSSS t`,
+         from DNR_NATION t`,
         (err,result) => {
             res.send(result.rows)
         }
@@ -195,9 +195,9 @@ router.get('/query_apply', (req, res) => {
         t.create_date,
         s.state_desc
         from (select * from WX_VOLUNTEER_APPLY where user_id = :user_id) t,
-        NBSSS.DNR_PROFESSION@DL_NBSSS p,
-        NBSSS.DNR_EDUCATION@DL_NBSSS e,
-        NBSSS.DNR_NATION@DL_NBSSS n,
+        DNR_PROFESSION p,
+        DNR_EDUCATION e,
+        DNR_NATION n,
         WX_DNR_ABO a,
         wx_volunteer_apply_state s
         where t.profession = p.profession_seq
