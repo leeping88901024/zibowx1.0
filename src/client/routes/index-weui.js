@@ -45,8 +45,6 @@ import TestHome2 from '../weui-components/Volunteer/TestHome2';
 import TestHome3 from '../weui-components/Volunteer/TestHome3';
 import User from '../weui-components/LocalUser/User';
 import UpdateExamination from '../weui-components/Volunteer/UpdateExamination';
-
-
 import {LoadMore} from "react-weui";
 // import AdminLogin from '../weui-components/admin/admin_login'
 import MyProgress from '../weui-components/Reimburse/MyProgress';
@@ -102,8 +100,8 @@ class WeuiRoute extends React.Component {
                     <Route path='/my/volunteer/reserv' component={ MyReserv } />
                     <Route path='/my/reaction' component={ MyReaction } />
                     <Route path='/reaction' component={ Reaction } />
-                    <Route path='/learntoknow' component={ Private(Learntoknow) } />
-                    {/* <Route path='/learntoknow' component={ Learntoknow } /> */}
+                    {/** <Route path='/learntoknow' component={ Private(Learntoknow) } /> */}
+                    <Route path='/learntoknow' component={ Learntoknow } />
                     <Route path='/reimburse' component={ Reimburse } />
                     <Route path='/reimbursesuccess' component={ ReimburseSuccessMsg } />
                     <Route path='/editreimbursesuccess' component={ EditReimburseSuccessMsg } />

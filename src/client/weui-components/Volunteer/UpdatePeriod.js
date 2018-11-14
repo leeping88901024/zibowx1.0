@@ -149,7 +149,6 @@ class UpdatePeriod extends React.Component {
                 title: '采血点',
                 dataIndex: 'collectionpoint', // 数据索引
                 key: 'collectionpoint',
-                colSpan: 2,
                 render: text => <a ref="">{text}</a>,
             },
             {

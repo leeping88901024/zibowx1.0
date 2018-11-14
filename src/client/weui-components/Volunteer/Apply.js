@@ -8,7 +8,6 @@ import isTelphoneNumber from './verifyFunc/tel';
 import checkEmail from './verifyFunc/email';
 import checkChinese from './verifyFunc/chinese';
 
-
 class Apply extends React.Component {
     constructor(props){
         super(props);
@@ -376,11 +375,39 @@ class Apply extends React.Component {
                                 files={this.state.profileImg}
                                 onError={msg => alert(msg)}
                                 onChange={(file,e) => {
-                                     let newFiles = [...this.state.profileImg, {url:file.data}];
-                                     this.setState({
+                                    var _this = this;
+                                    if (file.type.indexOf('image') === 0) {
+                                          var img = new Image();
+                                          img.src = file.data;
+                                    }
+                                    img.onload = function () {
+                                        var canvas = document.createElement('canvas');
+                                        var context = canvas.getContext('2d');
+                                        var originWidth = this.width;
+                                        var originHeight = this.height;
+                                        var maxWidth = 300,
+                                            maxHeight = 300;
+                                        var targetWidth = originWidth,
+                                            targetHeight = originHeight;
+                                        if(originWidth > maxWidth || originHeight > maxHeight) {
+                                            if(originWidth / originHeight > maxWidth / maxHeight) {
+                                                targetWidth = maxWidth;
+                                                targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                                            } else {
+                                                targetHeight = maxHeight;
+                                                targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                                            }
+                                        }
+                                        canvas.width = targetWidth;
+                                        canvas.height = targetHeight;
+                                        context.clearRect(0, 0, targetWidth, targetHeight);
+                                        context.drawImage(img, 0, 0, targetWidth, targetHeight);
+                                        var newUrl = canvas.toDataURL('image/jpeg', 0.92);
+                                        let newFiles = [..._this.state.profileImg, {url: newUrl}];
+                                        _this.setState({
                                         profileImg: newFiles
                                      });
-                                     console.log(file.data);
+                                    }
                                 }}
                                 onFileClick={
                                     (e, file, i) => {

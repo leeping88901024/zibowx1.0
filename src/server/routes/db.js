@@ -2,7 +2,6 @@ var router = require('express').Router();
 var oracledb = require('oracledb');
 var dbconfig = require('../config/dbconfig');
 var getAbsTime  = require('../utils/time');
-var LZString = require('lz-string');
 
 router.get('/locations', (req, res) => {
     db.execute(

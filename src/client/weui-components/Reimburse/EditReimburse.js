@@ -467,11 +467,39 @@ class EditReimburse extends React.Component {
                                         files={this.state.proofofrelationImg}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {
-                                            let newFiles = [...this.state.proofofrelationImg, {url:file.data}];
-                                            this.setState({
-                                                proofofrelationImg: newFiles
+                                            var _this = this;
+                                            if (file.type.indexOf('image') === 0) {
+                                                var img = new Image();
+                                                img.src = file.data;
+                                            }
+                                            img.onload = function () {
+                                                var canvas = document.createElement('canvas');
+                                                var context = canvas.getContext('2d');
+                                                var originWidth = this.width;
+                                                var originHeight = this.height;
+                                                var maxWidth = 300,
+                                                    maxHeight = 300;
+                                                var targetWidth = originWidth,
+                                                    targetHeight = originHeight;
+                                                if(originWidth > maxWidth || originHeight > maxHeight) {
+                                                    if(originWidth / originHeight > maxWidth / maxHeight) {
+                                                        targetWidth = maxWidth;
+                                                        targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                                                    } else {
+                                                        targetHeight = maxHeight;
+                                                        targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                                                    }
+                                                }
+                                                canvas.width = targetWidth;
+                                                canvas.height = targetHeight;
+                                                context.clearRect(0, 0, targetWidth, targetHeight);
+                                                context.drawImage(img, 0, 0, targetWidth, targetHeight);
+                                                var newUrl = canvas.toDataURL('image/jpeg', 0.92);
+                                                let newFiles = [..._this.state.proofofrelationImg, {url: newUrl}];
+                                                _this.setState({
+                                                    proofofrelationImg: newFiles
                                             });
-                                            //·console.log(file.data);
+                                            }
                                         }}
                                         onFileClick={
                                             (e, file, i) => {
@@ -499,11 +527,39 @@ class EditReimburse extends React.Component {
                                         files={this.state.idcardImg1}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {
-                                            let newFiles = [...this.state.idcardImg1, {url:file.data}];
-                                            this.setState({
-                                                idcardImg1: newFiles
+                                            var _this = this;
+                                            if (file.type.indexOf('image') === 0) {
+                                                var img = new Image();
+                                                img.src = file.data;
+                                            }
+                                            img.onload = function () {
+                                                var canvas = document.createElement('canvas');
+                                                var context = canvas.getContext('2d');
+                                                var originWidth = this.width;
+                                                var originHeight = this.height;
+                                                var maxWidth = 300,
+                                                    maxHeight = 300;
+                                                var targetWidth = originWidth,
+                                                    targetHeight = originHeight;
+                                                if(originWidth > maxWidth || originHeight > maxHeight) {
+                                                    if(originWidth / originHeight > maxWidth / maxHeight) {
+                                                        targetWidth = maxWidth;
+                                                        targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                                                    } else {
+                                                        targetHeight = maxHeight;
+                                                        targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                                                    }
+                                                }
+                                                canvas.width = targetWidth;
+                                                canvas.height = targetHeight;
+                                                context.clearRect(0, 0, targetWidth, targetHeight);
+                                                context.drawImage(img, 0, 0, targetWidth, targetHeight);
+                                                var newUrl = canvas.toDataURL('image/jpeg', 0.92);
+                                                let newFiles = [..._this.state.idcardImg1, {url: newUrl}];
+                                                _this.setState({
+                                                    idcardImg1: newFiles
                                             });
-                                            //·console.log(file.data);
+                                            }
                                         }}
                                         onFileClick={
                                             (e, file, i) => {
@@ -530,11 +586,39 @@ class EditReimburse extends React.Component {
                                         files={this.state.idcardImg2}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {
-                                            let newFiles = [...this.state.idcardImg2, {url:file.data}];
-                                            this.setState({
-                                                idcardImg2: newFiles
+                                            var _this = this;
+                                            if (file.type.indexOf('image') === 0) {
+                                                var img = new Image();
+                                                img.src = file.data;
+                                            }
+                                            img.onload = function () {
+                                                var canvas = document.createElement('canvas');
+                                                var context = canvas.getContext('2d');
+                                                var originWidth = this.width;
+                                                var originHeight = this.height;
+                                                var maxWidth = 300,
+                                                    maxHeight = 300;
+                                                var targetWidth = originWidth,
+                                                    targetHeight = originHeight;
+                                                if(originWidth > maxWidth || originHeight > maxHeight) {
+                                                    if(originWidth / originHeight > maxWidth / maxHeight) {
+                                                        targetWidth = maxWidth;
+                                                        targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                                                    } else {
+                                                        targetHeight = maxHeight;
+                                                        targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                                                    }
+                                                }
+                                                canvas.width = targetWidth;
+                                                canvas.height = targetHeight;
+                                                context.clearRect(0, 0, targetWidth, targetHeight);
+                                                context.drawImage(img, 0, 0, targetWidth, targetHeight);
+                                                var newUrl = canvas.toDataURL('image/jpeg', 0.92);
+                                                let newFiles = [..._this.state.idcardImg2, {url: newUrl}];
+                                                _this.setState({
+                                                    idcardImg2: newFiles
                                             });
-                                            //console.log(file.data);
+                                            }
                                         }}
                                         onFileClick={
                                             (e, file, i) => {
@@ -561,11 +645,39 @@ class EditReimburse extends React.Component {
                                         files={this.state.handleIdcardImg}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {
-                                            let newFiles = [...this.state.handleIdcardImg, {url:file.data}];
-                                            this.setState({
-                                                handleIdcardImg: newFiles
+                                            var _this = this;
+                                            if (file.type.indexOf('image') === 0) {
+                                                var img = new Image();
+                                                img.src = file.data;
+                                            }
+                                            img.onload = function () {
+                                                var canvas = document.createElement('canvas');
+                                                var context = canvas.getContext('2d');
+                                                var originWidth = this.width;
+                                                var originHeight = this.height;
+                                                var maxWidth = 300,
+                                                    maxHeight = 300;
+                                                var targetWidth = originWidth,
+                                                    targetHeight = originHeight;
+                                                if(originWidth > maxWidth || originHeight > maxHeight) {
+                                                    if(originWidth / originHeight > maxWidth / maxHeight) {
+                                                        targetWidth = maxWidth;
+                                                        targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                                                    } else {
+                                                        targetHeight = maxHeight;
+                                                        targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                                                    }
+                                                }
+                                                canvas.width = targetWidth;
+                                                canvas.height = targetHeight;
+                                                context.clearRect(0, 0, targetWidth, targetHeight);
+                                                context.drawImage(img, 0, 0, targetWidth, targetHeight);
+                                                var newUrl = canvas.toDataURL('image/jpeg', 0.92);
+                                                let newFiles = [..._this.state.handleIdcardImg, {url: newUrl}];
+                                                _this.setState({
+                                                    handleIdcardImg: newFiles
                                             });
-                                            //console.log(file.data);
+                                            }
                                         }}
                                         onFileClick={
                                             (e, file, i) => {
@@ -592,11 +704,39 @@ class EditReimburse extends React.Component {
                                         files={this.state.inpatientInvoiceImg}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {
-                                            let newFiles = [...this.state.inpatientInvoiceImg, {url:file.data}];
-                                            this.setState({
-                                                inpatientInvoiceImg: newFiles
+                                            var _this = this;
+                                            if (file.type.indexOf('image') === 0) {
+                                                var img = new Image();
+                                                img.src = file.data;
+                                            }
+                                            img.onload = function () {
+                                                var canvas = document.createElement('canvas');
+                                                var context = canvas.getContext('2d');
+                                                var originWidth = this.width;
+                                                var originHeight = this.height;
+                                                var maxWidth = 300,
+                                                    maxHeight = 300;
+                                                var targetWidth = originWidth,
+                                                    targetHeight = originHeight;
+                                                if(originWidth > maxWidth || originHeight > maxHeight) {
+                                                    if(originWidth / originHeight > maxWidth / maxHeight) {
+                                                        targetWidth = maxWidth;
+                                                        targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                                                    } else {
+                                                        targetHeight = maxHeight;
+                                                        targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                                                    }
+                                                }
+                                                canvas.width = targetWidth;
+                                                canvas.height = targetHeight;
+                                                context.clearRect(0, 0, targetWidth, targetHeight);
+                                                context.drawImage(img, 0, 0, targetWidth, targetHeight);
+                                                var newUrl = canvas.toDataURL('image/jpeg', 0.92);
+                                                let newFiles = [..._this.state.inpatientInvoiceImg, {url: newUrl}];
+                                                _this.setState({
+                                                    inpatientInvoiceImg: newFiles
                                             });
-                                            //console.log(file.data);
+                                            }
                                         }}
                                         onFileClick={
                                             (e, file, i) => {
@@ -623,11 +763,39 @@ class EditReimburse extends React.Component {
                                         files={this.state.blooddetailImg}
                                         onError={msg => alert(msg)}
                                         onChange={(file,e) => {
-                                            let newFiles = [...this.state.blooddetailImg, {url:file.data}];
-                                            this.setState({
-                                                blooddetailImg: newFiles
+                                            var _this = this;
+                                            if (file.type.indexOf('image') === 0) {
+                                                var img = new Image();
+                                                img.src = file.data;
+                                            }
+                                            img.onload = function () {
+                                                var canvas = document.createElement('canvas');
+                                                var context = canvas.getContext('2d');
+                                                var originWidth = this.width;
+                                                var originHeight = this.height;
+                                                var maxWidth = 300,
+                                                    maxHeight = 300;
+                                                var targetWidth = originWidth,
+                                                    targetHeight = originHeight;
+                                                if(originWidth > maxWidth || originHeight > maxHeight) {
+                                                    if(originWidth / originHeight > maxWidth / maxHeight) {
+                                                        targetWidth = maxWidth;
+                                                        targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                                                    } else {
+                                                        targetHeight = maxHeight;
+                                                        targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                                                    }
+                                                }
+                                                canvas.width = targetWidth;
+                                                canvas.height = targetHeight;
+                                                context.clearRect(0, 0, targetWidth, targetHeight);
+                                                context.drawImage(img, 0, 0, targetWidth, targetHeight);
+                                                var newUrl = canvas.toDataURL('image/jpeg', 0.92);
+                                                let newFiles = [..._this.state.blooddetailImg, {url: newUrl}];
+                                                _this.setState({
+                                                    blooddetailImg: newFiles
                                             });
-                                            //console.log(file.data);
+                                            }
                                         }}
                                         onFileClick={
                                             (e, file, i) => {
