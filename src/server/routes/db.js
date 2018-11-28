@@ -2,6 +2,11 @@ var router = require('express').Router();
 var oracledb = require('oracledb');
 var dbconfig = require('../config/dbconfig');
 var getAbsTime  = require('../utils/time');
+// var connPool = require("../connPool");
+
+// var db=connPool.getZibowxConn();
+
+// console.log(db)
 
 router.get('/locations', (req, res) => {
     db.execute(
@@ -1234,6 +1239,7 @@ router.post('/check_mail',(req, res) => {
 
 router.get('/userinfo_local', (req, res) => {
     if (!('passport' in req.session)) {
+        console.log('session 中无 passport ')
         return res.send({
             message: {
                 id: false,
@@ -1242,6 +1248,7 @@ router.get('/userinfo_local', (req, res) => {
         });
     }
     if (!('user' in req.session.passport)) {
+        console.log('passport 中无 user')
         return res.send({
             message: {
                 id: false,
@@ -1271,7 +1278,8 @@ oracledb.getConnection(
 ).then(connecttion => {
     db = connecttion;
 }).catch(error => {
-    console.log('ERROR:', error)
+    console.log('11111——ERROR:', error)
 });
+
 
 module.exports = router;

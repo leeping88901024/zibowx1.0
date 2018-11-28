@@ -13,7 +13,7 @@ class Home2 extends React.Component {
   constructor(props) {
       super(props);
       this.state = {
-        collapsed: true,
+        collapsed: false,
         userinfo: []
       };
       this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -29,13 +29,14 @@ class Home2 extends React.Component {
       '/db/userinfo_local',
       {
         method: 'get',
+        credentials: "include",
         headers: {
           accept: 'application/json'
         }
       }
     ).then(res => res.json())
      .then(json => {
-       //console.log(json);
+       console.log(json);
        if(json.message.id) {
          this.setState({userinfo: json.message.content});
        } else {
@@ -59,9 +60,8 @@ class Home2 extends React.Component {
   }
 
   handleLogout() {
-    // console.log('you will logout....');
     fetch(
-        '/loginlocal/logout',
+        '/logoutlocal',
         {
             method: 'get',
             headers: {
@@ -111,23 +111,24 @@ class Home2 extends React.Component {
                     <h1>后台管理系统</h1>
                     </Link>
                 </div>
-                <Menu theme="light" mode="inline" defaultSelectedKeys={['1']} onClick={this.handleMenuClick}>
+                <Menu theme="light" mode="inline" onClick={this.handleMenuClick}>
                     <Menu.Item key="/testhome2">
                         <Icon type="file" />
                         <span>主页</span>
                     </Menu.Item>
                     <SubMenu key="sub3" title={<span><Icon type="team" /><span>志愿者</span></span>}>
                         <Menu.Item key="/updateperiod">预约服务人数</Menu.Item>
-                        <Menu.Item key="/updateexamination">志愿者考题设置</Menu.Item>
+                        {/* <Menu.Item key="/updateexamination">志愿者考题设置</Menu.Item> */}
                     </SubMenu>
-                    {/*
-            <SubMenu key="sub4" title={<span><Icon type="file" /><span>微信文章</span></span>}>
-                <Menu.Item key="/admin_articlesList">微信文章列表</Menu.Item>
-                <Menu.Item key="/admin_uploadMaterial">新建微信文章</Menu.Item>
+
+            <SubMenu key="sub4" title={<span><Icon type="file" /><span>微信</span></span>}>
+                <Menu.Item key="/admin_BldNotice">微信菜单设置</Menu.Item>
+                {/* <Menu.Item key="/admin_uploadMaterial">新建微信文章</Menu.Item>
                 <Menu.Item key="/admin_wxArticlesLook">预览</Menu.Item>
                 <Menu.Item key="/admin_perMaterialsList">素材列表</Menu.Item>
+                */}
             </SubMenu>
-            */}
+
                     <SubMenu key="sub5" title={<span><Icon type="file" /><span>采血点设置</span></span>}>
                         <Menu.Item key="/admin_locationList">采血点列表</Menu.Item>
                     </SubMenu>
@@ -182,7 +183,7 @@ class Home2 extends React.Component {
                             cursor: 'pointer',
                             verticalAlign: 'center',
                             transition: 'all 0.3s, padding 0s'
-                        }}>{this.state.userinfo[1]}</span>
+                        }}>{`${this.state.userinfo[1]}`}</span>
                         </span>
                             </Dropdown>
                         ) : (

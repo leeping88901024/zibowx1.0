@@ -148,7 +148,7 @@ class  Home extends React.Component {
          .then(json => {
              // console.log(`the user info is ${json.userinfo}`);
              if(!json.userinfo) {
-                 this.props.history.push('/requestWxAuth?comeFromRouter=/home');
+                  this.props.history.push('/requestWxAuth?comeFromRouter=/home');
                  return;
              }
              // 用户显示个人信息
@@ -241,6 +241,7 @@ class  Home extends React.Component {
                                 <CellFooter>
                                 </CellFooter>
                             </Cell>
+                            {/*
                             <Cell onClick={this.clickHander.bind(this,'/my/reimburseprogress')}>
                                 <CellHeader>
                                     <img src={iconReinburseprogress} alt="" style={{display: `block`, width: `20px`, marginRight: `5px`}}/>
@@ -251,6 +252,7 @@ class  Home extends React.Component {
                                 <CellFooter>
                                 </CellFooter>
                             </Cell>
+                            */}
                         </Cells>
                     </div>
                     

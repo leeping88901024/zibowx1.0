@@ -11,6 +11,8 @@ export class RequestWxAuth extends Component{
         const searchParams = new URLSearchParams(paramsString);
 
         const comeFromRouter = searchParams.get('comeFromRouter');
+        const  searchP = searchParams.get("searchP");
+
         //localStorage.setItem("comeFromRouter",comeFromRouter);
         commonModule.setCookie("comeFromRouter",comeFromRouter,1);
         commonModule.setCookie("searchParams",searchParams,1);
@@ -46,13 +48,9 @@ export class AutoLogin extends Component{
             .then((response) => response.json())
             .then((responseJson) => {
                   if(responseJson.status == 200){
-                      //console.log(commonModule.getCookie("comeFromRouter")+"?"+commonModule.getCookie("searchParams"));
-
-                      //获取localstoreage保存token
-                        //window.localStorage.setItem("token",responseJson.token);
                         //跳转到请求的控件
                      window.location.href = commonModule.getCookie("comeFromRouter")+"?"+commonModule.getCookie("searchParams");
-
+                     console.log("我是参数："+commonModule.getCookie("comeFromRouter")+"?"+commonModule.getCookie("searchParams"))
                   }else{
                       console.log(responseJson.message);
                       if (confirm("微信授权失败，是否重新授权?")) {

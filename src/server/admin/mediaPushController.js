@@ -455,21 +455,6 @@ router.get("/loadFollowers",(req,res)=>{
     });
     res.send("ok")
 });
-
-/**
- * 删除图文素材通过mediaid
- */
-router.get("/removeMedia",(req,res)=>{
-    api.removeMaterial("AvzeSlVi2Y7dTKNs90wAd-7VctxZ3fWGNrT1QemwKbA", (err,result,res)=>{
-        if(err){
-            console.log(err);
-            return
-        }
-        console.log(JSON.stringify(result))
-        res.send("ok")
-    });
-});
-
 /**
  * 预览图文消息
  */
@@ -483,34 +468,5 @@ router.get("/previewhMedia",(req,res)=>{
         res.send("ok")
     });
 });
-//从数据库删除图文消息
-router.get("/deleteNewsFromDb",(req,res)=>{
-    var news_id  = req.query.id;
-    if(news_id == ''){
-        let resObj = {
-            status:10060,
-            message:'请选择要删除的文章'
-        }
-        res.send(resObj)
-        return
-    }
-    mediaPushDao.deleteNews(news_id).then((result)=>{
-        let resObj = {
-            status:200,
-            message:'OK'
-        }
-        res.send(resObj)
-        return
-    }).catch((err)=>{
-        console.log("错误来自mediaPushController:"+err)
-        let resObj = {
-            status:10027,
-            message:'文章删除失败'
-        }
-        res.send(resObj)
-        return
-    });
-});
-
 
 module.exports = router;

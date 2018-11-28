@@ -60,7 +60,7 @@ class Regist extends React.Component {
                         type: 'primary',
                         label: '确定',
                         onClick: ()=>{
-                            window.location.href = '/requestWxAuth';
+                            window.location.href = '/requestWxAuth?comeFromRouter=/regist';
                         }
                     }
                 ]
@@ -74,17 +74,17 @@ class Regist extends React.Component {
         fetch('/private/donor/getWxUserInfo',{credentials: "include",headers:{token:window.localStorage.getItem("token")}})
             .then((response) => response.json())
             .then((responseJson) => {
-                if(responseJson.status === 200){
+                if(responseJson.status == 200){
                     this.setState({nickname: responseJson.data.nickname, prof_img_url: responseJson.data.headimgurl});
-                }else if(responseJson.status === 10012){
-                    window.location.href = 'requestWxAuth';
+                }else if(responseJson.status == 10024){
+                    window.location.href = '/requestWxAuth?comeFromRouter=/regist';
                 }else{
                     this.setState({
                         showAndroid2: true,
                         dialogMes2:'加载用户信息失败,是否继续认证?',
                     });
                 }
-            }).catch(function(){
+            }).catch(function(err){
                 this.setState({
                     showAndroid2: true,
                     dialogMes2:'加载用户信息失败,是否继续认证?',
@@ -256,12 +256,15 @@ class Regist extends React.Component {
             .then((response) => response.json())
             .then((responseJson) => {
                 if(responseJson.status === 200){
-                    console.log("认证成功！");
+                    this.setState({
+                        showAndroid1: true,
+                        dialogMes:'认证成功！',
+                    });
                     //从localstorage取出用户想到达的控件
                     window.location.href = commonModule.getCookie("afterAuthTo");
                 }else if(responseJson.status === 10024){
                     //说明用户未进行微信授权
-                    window.location.href='/requestWxAuth'
+                    window.location.href='/requestWxAuth?comeFromRouter=/regist'
                 } else{
                     this.setState({
                         showAndroid1: true,
@@ -439,8 +442,8 @@ class DonorAuthByDonId extends React.Component {
             .then((responseJson) => {
                 if(responseJson.status === 200){
                     this.setState({nickname: responseJson.data.nickname, prof_img_url: responseJson.data.headimgurl});
-                }else if(responseJson.status === 10012){
-                    window.location.href = 'requestWxAuth';
+                }else if(responseJson.status === 10024){
+                    window.location.href = '/requestWxAuth?comeFromRouter=/donorAuthByDonId';
                 }else{
                     this.setState({
                         showAndroid2: true,

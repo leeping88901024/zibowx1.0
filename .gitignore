@@ -1,3 +1,5 @@
 node_modules
 .vscode
 .svn
+src/server/dist
+src/server/logs/logs

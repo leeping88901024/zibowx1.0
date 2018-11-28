@@ -39,7 +39,7 @@ class Home3 extends React.Component {
 
   handleLogout() {
     console.log('you will logout ')
-    this.props.history.push('/login');
+    this.props.history.push('/loginl');
 }
 
   render() {

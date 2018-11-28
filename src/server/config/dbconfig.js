@@ -7,7 +7,7 @@ module.exports = {
     wxdb: {
         user: 'zibowx',
         password: 'zibowx',
-        connectString: '192.168.1.51/spda'
+        connectString: 'vipgz1.idcfengye.com:10114/spda'
     },
     test: {
         user: 'hr',

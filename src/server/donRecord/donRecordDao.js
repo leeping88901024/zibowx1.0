@@ -1,5 +1,7 @@
 var rowsData = require('../utils/rowsProcess');
 var connPool = require("../connPool");
+//日志
+var loggerFile = require("../logs/loggerFile");
 
 var donRecordDao = {
     //证件类型、献血者于用血者关系
@@ -40,13 +42,14 @@ var donRecordDao = {
                 }
                 //返回
             } catch (err) { // catches errors in getConnection and the query
+                loggerFile.error("来自queryDonRecord"+err);
                 reject(err);
             } finally {
                 if (conn) {   // the conn assignment worked, must release
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自queryDonRecord"+e);
                     }
                 }
             }

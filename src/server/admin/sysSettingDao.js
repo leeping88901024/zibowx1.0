@@ -1,9 +1,12 @@
 var rowsData = require('../utils/rowsProcess');
 var connPool = require("../connPool");
+//日志
+var loggerFile = require("../logs/loggerFile");
 
 var sysSettingDao = {
     //加载指定地点详细信息
     loadNbsssLocation:function (res,loactionSeq){
+        loggerFile.info("来自sysSettingDao:loadNbsssLocation被执行！")
         connPool.getZibowxConn().then((connection)=>{
             var sql = 'SELECT LD.EXACT_ADDRESS,\n' +
                 '       DPL.LOCATION_SEQ,\n' +
@@ -21,7 +24,7 @@ var sysSettingDao = {
                 sql,[loactionSeq],
                 function (err, result) {
                     if (err) {
-                        console.error(err.message);
+                        loggerFile.error("来自sysSettingDao:加载指定地点详细信息异常"+err)
                         let resBody = {
                             status : 10017,
                             message:'加载数据失败'
@@ -42,13 +45,13 @@ var sysSettingDao = {
                     if(connection){
                         connection.close((err) => {
                             if (err) {
-                                console.error(err);
+                                loggerFile.error("来自sysSettingDao:关闭connection异常"+err)
                             }
                         });
                     }
                 });
         }).catch((err)=>{
-            console.error(err);
+            loggerFile.error("来自sysSettingDao:加载数据失败"+err)
             let resBody = {
                 status : 10017,
                 message:'加载数据失败'
@@ -59,6 +62,7 @@ var sysSettingDao = {
     },
     //加载地点服务
     loadService :function (res){
+        loggerFile.info("来自sysSettingDao:loadService被执行！")
         connPool.getZibowxConn().then((connection)=> {
             var sql = 'select * from WX_LOCATION_SERVICE';
             connection.execute(
@@ -92,8 +96,8 @@ var sysSettingDao = {
                     }
                 })
                 }).catch((err) => {
-                console.error(err);
-                let resBody = {
+            loggerFile.error("来自sysSettingDao:加载地点服务失败"+err)
+            let resBody = {
                     status: 10017,
                     message: '加载数据失败'
                 }
@@ -103,13 +107,14 @@ var sysSettingDao = {
         },
     //加载献血形式
     loadDonTypes:function (res){
+        loggerFile.info("来自sysSettingDao:loadDonTypes被执行！")
         connPool.getZibowxConn().then((connection)=> {
             var sql = 'select * from WX_LOCATION_DON_TYPE';
             connection.execute(
                 sql,
                 function (err, result) {
                     if (err) {
-                        console.error(err.message);
+                        loggerFile.error("来自sysSettingDao_loadDonTypes：加载献血形式失败！"+err);
                         let resBody = {
                             status: 10017,
                             message: '加载数据失败'
@@ -130,15 +135,15 @@ var sysSettingDao = {
                     if (connection) {
                         connection.close((err) => {
                             if (err) {
-                                console.error(err);
+                                loggerFile.error("来自sysSettingDao_loadDonTypes：关闭数据库连接异常！"+err);
                             }
                         });
                     }
 
                 })
         }).catch((err) => {
-                console.error(err);
-                let resBody = {
+            loggerFile.error("来自sysSettingDao_loadDonTypes：加载献血形式失败！"+err);
+            let resBody = {
                     status: 10017,
                     message: '加载数据失败'
                 }
@@ -161,29 +166,11 @@ var sysSettingDao = {
                     "when not matched then\n" +
                     "     insert values (seq_location_detail.nextval,\'"+locationDetail.addressDetail+"\',"+locationDetail.locationSeq+",null,null,"+locationDetail.donType+",\'"+locationDetail.imgPath+"\',\'"+locationDetail.openingTime+"\',\'"+locationDetail.closedTime+"\',\'"+locationDetail.locationName+"\',\'"+locationDetail.imgUri+"\')"
 
-                console.log(sql_loc);
                 //向表wx_location_detail更新记录
                 let result_loc_detail = await conn.execute(sql_loc);
-
-                /*
-                //删除所有 本地点的相关服务记录
-                let delete_relation = await conn.execute("DELETE FROM WX_SERVICE_DETAIL_RELATION WHERE DETAIL_ID = :DETAIL_ID",
-                    [locationDetail.locationSeq]);
-
-                //更地点和服务关系表
-                let result_relation = '';
-                for(let i=0;i<locationDetail.services.length;i++){
-                    let sql_relation = "merge into WX_SERVICE_DETAIL_RELATION SDR\n" +
-                        "using (select "+locationDetail.locationSeq+" as detailseq,"+locationDetail.services[i]+" as serviceid from dual) t\n" +
-                        "on (t.detailseq = sdr.detail_id and t.serviceid = sdr.service_id)\n" +
-                        "when not matched then\n" +
-                        "     insert values ("+locationDetail.locationSeq+","+locationDetail.services[i]+")"
-
-                     result_relation = await conn.execute(sql_relation);
-                }
-*/
                 conn.commit((err) => {
                     if (err != null) {
+                        loggerFile.error("来自sysSettingDao_updateLocationdDetail：提交数据异常"+err);
                         conn.rollback((r_err) => {
                             reject(err);
                         })
@@ -193,8 +180,7 @@ var sysSettingDao = {
                 //返回结果
                 resolve(result_loc_detail);
             } catch (err) {
-                // catches errors in getConnection and the query
-                console.log(err)
+                loggerFile.error("来自sysSettingDao_updateLocationdDetail：更新地点详细信息异常"+err);
                 conn.rollback((r_err)=>{
                     reject(r_err);
                 })
@@ -227,7 +213,7 @@ var sysSettingDao = {
                 sql,
                 function (err, result) {
                     if (err) {
-                        console.error(err.message);
+                        loggerFile.error("来自sysSettingDao_loadLocationDetail：加载地点详细信息"+err);
                         let resBody = {
                             status : 10017,
                             message:'加载数据失败'
@@ -253,7 +239,7 @@ var sysSettingDao = {
                     }
                 });
                 }).catch((err) => {
-                console.error(err);
+            loggerFile.error("来自sysSettingDao_loadLocationDetail：加载地点详细信息"+err);
                 let resBody = {
                     status: 10017,
                     message: '加载数据失败'

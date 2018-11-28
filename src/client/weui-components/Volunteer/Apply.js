@@ -450,7 +450,7 @@ class Apply extends React.Component {
                           <Input
                             name="idcard" 
                             value={this.state.values.idcard} 
-                            type="number" 
+                            type="string" 
                             onChange={this.handleInputChange}
                             onBlur={this.handleVerifyIdcard}
                             placeholder="请输入身份证号#"/>

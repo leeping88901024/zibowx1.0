@@ -1,6 +1,7 @@
 var rowsData = require('../../utils/rowsProcess');
 var connPool = require("../../connPool");
-
+//日志
+var loggerFile = require("../../logs/loggerFile");
 /**
  * 向数据库查询用户
  */
@@ -106,15 +107,15 @@ var userdao = {
                         resolve(rowsData.toMap(db_psn_seq.metaData,db_psn_seq.rows));
                     }
                     //返回
-                } catch (err) { // catches errors in getConnection and the query
-                    console.log(err+"来自皮皮虾")
+                } catch (err) { // catches errors in getConnection and the query                        loggerFile.error("来自testResultDao:"+e);
+                    loggerFile.error("来自userdao:"+err);
                     reject(err);
                 } finally {
                     if (conn) {   // the conn assignment worked, must release
                         try {
                             await conn.release();
                         } catch (e) {
-                            console.error(e);
+                            loggerFile.error("来自userdao:"+e);
                         }
                     }
                 }
@@ -137,13 +138,14 @@ var userdao = {
                 }
                 //返回
             } catch (err) { // catches errors in getConnection and the query
+                loggerFile.error("来自userdao:"+err);
                 reject(err);
             } finally {
                 if (conn) {   // the conn assignment worked, must release
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自userdao:"+e);
                     }
                 }
             }
@@ -170,13 +172,14 @@ var userdao = {
                     resolve(result);
                     //返回
                 } catch (err) { // catches errors in getConnection and the query
+                    loggerFile.error("来自userdao:"+err);
                     reject(err);
                 } finally {
                     if (conn) {   // the conn assignment worked, must release
                         try {
                             await conn.release();
                         } catch (e) {
-                            console.error(e);
+                            loggerFile.error("来自userdao:"+e);
                         }
                     }
                 }

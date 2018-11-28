@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var session = require('express-session');
 var donRecordDao = require('./donRecordDao');
+//日志
+var loggerFile = require("../logs/loggerFile");
 
 router.post('/queryDonRecord',(req,res)=>{
 
@@ -85,6 +87,7 @@ router.post('/queryDonRecord',(req,res)=>{
         res.send(resBody)
         return
     }).catch((err)=>{
+        loggerFile.error("来自donRecordController:"+err);
         let resBody = {
             status : 10020,
             message:'查询出错'+err
@@ -116,7 +119,7 @@ router.get('/recordResult',(req,res)=>{
     }
     //调用dao查询
     donRecordDao.queryDonRecord(psnSeq).then((result)=>{
-        if(result == ''){
+        if(result == null){
             let resBody = {
                 status:10019,
                 message:'查询结果为空'
@@ -149,7 +152,8 @@ router.get('/recordResult',(req,res)=>{
         res.send(resbody);
         return
     }).catch((err)=>{
-            let resBody = {
+        loggerFile.error("来自donRecordController:检测结果查询异常"+err);
+        let resBody = {
                 status:10019,
                 message:'检测结果查询异常'
             }

@@ -3,6 +3,8 @@ var router = express.Router();
 var session = require('express-session');
 var userdao =  require('./dao/userdao');
 var commonModule =  require('../commonModule');
+//日志
+var loggerFile = require("../logs/loggerFile");
 
 /**
  * 验证用户是否进行献血者认证
@@ -13,7 +15,6 @@ router.get('/isDonorAuth',(req,res) => {
     if(user != null ) {
         //获取psn_seq
         let psn_seq = user.psn_seq;
-        console.log(psn_seq+":这个opsn_seq是多少")
         if (psn_seq !=  null) {
             let resBody = {
                 status: 200,
@@ -189,7 +190,8 @@ router.post('/regist',function (req,res) {
             return;
         }
     }).catch((err)=>{
-        console.log("查询用户seq出错来自:donorAuth");
+        //日志
+        loggerFile.error("来自donAuth查询用户seq出错"+err);
         let resbody = {
             status:500,
             message:'服务器出错'+err
@@ -307,8 +309,8 @@ router.post('/donAuthByDonId',function (req,res) {
                     res.send(resbody);
                     return;
                 }).catch((err)=>{
-                        console.log("献血者认证出现错误:"+err);
-                        let resbody = {
+                    loggerFile.error("来自donAuth献血者认证出现错误"+err);
+                     let resbody = {
                             status:10016,
                             message:'认证失败！'+err
                         }
@@ -317,7 +319,7 @@ router.post('/donAuthByDonId',function (req,res) {
                     }
                 );
             }).catch((err)=>{
-                console.log("验证献血编号出错:donorAuth");
+                loggerFile.error("来自donAuth验证献血编号出错"+err);
                 let resbody = {
                     status:500,
                     message:'服务器出错'+err
@@ -335,7 +337,7 @@ router.post('/donAuthByDonId',function (req,res) {
             return;
         }
     }).catch((err)=>{
-        console.log("查询用户seq出错来自:donorAuth"+err);
+        loggerFile.error("来自donAuth查询用户seq出错"+err);
         let resbody = {
             status:500,
             message:'服务器出错'+err
@@ -344,6 +346,5 @@ router.post('/donAuthByDonId',function (req,res) {
         return;
     })
 });
-
 
 module.exports = router;

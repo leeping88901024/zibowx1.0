@@ -1,8 +1,6 @@
 import React,{ Component }  from 'react';
-import ReactDOM from 'react-dom';
 import {
-    Button,Tab,NavBarItem,ActionSheet,Select,Flex,FlexItem,Panel,PanelBody,MediaBox,
-    MediaBoxInfo,MediaBoxInfoMeta,PanelHeader,MediaBoxTitle,MediaBoxDescription
+   ActionSheet
 } from 'react-weui';
 import 'react-weui/build/packages/react-weui.css';
 import './donLocation.css';

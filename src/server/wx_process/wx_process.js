@@ -38,15 +38,16 @@ router.post('/wx',(req,res)=>{
     }else if(data.msgtype === 'event' && data.event === 'unsubscribe'){
         //取消关注了
     }else if(data.msgtype === 'text'){//文本消息
+        data.content = '你好公众号暂不支持消息回复';
         msgText(res,data);
     }else if(data.msgtype === 'image'){//图片消息
-        data.content = '你好暂不支持图片回复';
+        data.content = '你好公众号暂不支持消息回复';
         msgText(res,data);
     }else if(data.msgtype === 'video'){//视频消息
-        data.content = '你好暂不支持视频回复';
+        data.content = '你好公众号暂不支持消息回复';
         msssage(res,data);
     }else if(data.msgtype === 'voice'){//语言消息
-        data.content = '你好暂不支语音回复';
+        data.content = '你好公众号暂不支持消息回复';
         msssage(res,data);
     }
 });

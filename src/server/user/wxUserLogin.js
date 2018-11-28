@@ -7,16 +7,18 @@ var WxUserLogin = require('wechat-oauth');
 var client = new WxUserLogin(wxconfig.appid, wxconfig.appscret);
 var userdao =  require('./dao/userdao');
 var svgCaptcha = require('svg-captcha');
+//日志
+var loggerFile = require("../logs/loggerFile");
 
 /**
  * 从微信服务器获取微信用户信息
  */
 router.get('/getWxUserInfoFromWx',(req,res) => {
-    console.log("cookie："+req.cookies.sessionid);
+    loggerFile.info("从微信服务器获取微信用户信息");
     var code = req.query.code;
     client.getAccessToken(code,(err,result) => {
         if(result.errcode){
-            console.log("拉取微信信息异常咯:"+result.msg)
+            loggerFile.error("来自wxUserLogin:拉取微信信息异常"+result.msg);
             res.send({status:10013,message:'拉取用户信息失败'})
             return;
         }
@@ -24,6 +26,7 @@ router.get('/getWxUserInfoFromWx',(req,res) => {
         var openid = result.data.openid;
         client.getUser(openid,(err,result) => {
             if(err){
+                loggerFile.error("来自wxUserLogin:拉取微信信息异常"+err);
                 res.send({status:10013,message:'拉取用户信息失败'});
             }
             var userInfo = result;
@@ -47,9 +50,7 @@ router.get('/getWxUserInfoFromWx',(req,res) => {
             }
             //查询
             userdao.getUserByOpenId(openId).then((result)=> {
-                console.log("我是user:"+result)
                 if(result){
-                    console.log("我是user:"+result);
                     result = JSON.parse(result);
                     //保存用户信息到session
                     user.psn_seq = result.PSN_SEQ;
@@ -79,7 +80,7 @@ router.get('/getWxUserInfoFromWx',(req,res) => {
                         res.send(resbody);
                         return;
                     }).catch((err)=>{
-                            console.log("拉取微信用户信息失败:"+err);
+                        loggerFile.error("来自wxUserLogin:拉取微信用户信息失败"+err);
                             let resbody = {
                                 status:10013,
                                 message:'拉取微信用户信息失败！'+err
@@ -90,7 +91,7 @@ router.get('/getWxUserInfoFromWx',(req,res) => {
                     );
                 }
             }).catch((err)=>{
-                console.log("查询用户信息异常:"+err);
+                loggerFile.error("来自wxUserLogin:查询用户信息异常"+err);
                 let resbody = {
                     status:10013,
                     message:'查询用户信息异常！'+err
@@ -109,7 +110,6 @@ router.get('/getWxUserInfoFromWx',(req,res) => {
 router.get('/sendCaptcha',(req,res)=>{
     //获取手机号码
     var tell = req.query.tell;
-    console.log("带来的号码是:"+tell);
     //调用验证码发送接口发送验证码
     var captcha = 123456;
     //保存到session

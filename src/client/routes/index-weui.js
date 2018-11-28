@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
     BrowserRouter as Router,
-    //HashRouter as Router,
     Route,
     Switch,
     Redirect
@@ -11,11 +10,10 @@ import {Regist,DonorAuthByDonId} from '../weui-components/user/Login'
 import {RequestWxAuth,AutoLogin} from '../weui-components/user/autoLogin'
 import AppointLocation from '../weui-components/donAppoint/donLocation';
 import {DonBldConsult,DonBldDetailInfo,AppointSucess,MyAppointRecord} from '../weui-components/donAppoint/donBldAppoint';
-import {QueryTestResult,TestResult} from '../weui-components/testResult/testResult';
-import {QueryDonRecord,DonRecord} from '../weui-components/donRecord/donRecord';
-import {AdminUploadMaterial,AdminArticlesList,AdminWxArticlesEdit,AdminWxArticlesLook,AdminPerMaterialsList}  from "../weui-components/admin/upload_material"
+import {TestResult} from '../weui-components/testResult/testResult';
+import {DonRecord} from '../weui-components/donRecord/donRecord';
 import {commonModule} from "../weui-components/publicModule/publicModule";
-import {AdminLocationSetting,AdminLocationList} from "../weui-components/admin/sysSetting"
+import {AdminLocationSetting,AdminLocationList,AdminBldNotice} from "../weui-components/admin/sysSetting"
 {/*志愿者*/}
 import Home from '../weui-components/Home';
 import Login from '../weui-components/Login';
@@ -46,7 +44,6 @@ import TestHome3 from '../weui-components/Volunteer/TestHome3';
 import User from '../weui-components/LocalUser/User';
 import UpdateExamination from '../weui-components/Volunteer/UpdateExamination';
 import {LoadMore} from "react-weui";
-// import AdminLogin from '../weui-components/admin/admin_login'
 import MyProgress from '../weui-components/Reimburse/MyProgress';
 class WeuiRoute extends React.Component {
     render() {
@@ -62,20 +59,13 @@ class WeuiRoute extends React.Component {
                     <Route path="/myAppointRecord" component={Private(MyAppointRecord)}/>
                     <Route path="/donBldDetailInfo" component={DonBldDetailInfo}/>
                     <Route path="/appointSucess" component={AppointSucess} />
-                    <Route path="/queryTestResult" component={Private(QueryTestResult)} />
                     <Route path="/testResult" component={Private(TestResult)} />
-                    <Route path="/queryDonRecord" component={Private(QueryDonRecord)} />
                     <Route path="/donRecord" component={Private(DonRecord)} />
                     <Route path="/donorAuthByDonId" component={DonorAuthByDonId} />
                     {/*后台管理 */}
-                    <Route path="/admin_uploadMaterial" component={AdminUploadMaterial} ></Route>
-                    <Route path="/admin_articlesList" component={AdminArticlesList} ></Route>
-                    <Route path="/admin_wxArticlesEdit" component={AdminWxArticlesEdit} ></Route>
-                    <Route path="/admin_wxArticlesLook" component={AdminWxArticlesLook} ></Route>
-                    <Route path="/admin_perMaterialsList" component={AdminPerMaterialsList} ></Route>
                     <Route path="/admin_locationSetting" component={AdminLocationSetting} ></Route>
                     <Route path="/admin_locationList" component={AdminLocationList} ></Route>
-                    {/* <Route path="/admin_login" component={AdminLogin} ></Route> */}
+                    <Route path="/admin_BldNotice" component={AdminBldNotice} ></Route>
 
                     {/*志愿者*/}
                     <Route path='/updateexamination' component={ UpdateExamination } />
@@ -87,7 +77,7 @@ class WeuiRoute extends React.Component {
                     <Route path='/reimburseform/:psnseq' component={ ReimburseForm } />
                     <Route path='/reimburseedit/:form_id' component={ EditReimburse } />
                     <Route path='/home' component={ Home } />
-                    <Route path='/login' component={Login} />
+                    <Route path='/loginl' component={Login} />
                     <Route path='/locations/:location_id' component={ Location }/>
                     <Route exact path='/nvgtt/:location_id' component={ MyMap } />
                     <Route path='/volunteer/apply' component={Apply} />
@@ -100,8 +90,7 @@ class WeuiRoute extends React.Component {
                     <Route path='/my/volunteer/reserv' component={ MyReserv } />
                     <Route path='/my/reaction' component={ MyReaction } />
                     <Route path='/reaction' component={ Reaction } />
-                    {/** <Route path='/learntoknow' component={ Private(Learntoknow) } /> */}
-                    <Route path='/learntoknow' component={ Learntoknow } />
+                    <Route path='/learntoknow' component={ Private(Learntoknow) } />
                     <Route path='/reimburse' component={ Reimburse } />
                     <Route path='/reimbursesuccess' component={ ReimburseSuccessMsg } />
                     <Route path='/editreimbursesuccess' component={ EditReimburseSuccessMsg } />
@@ -158,20 +147,4 @@ function Private(Component){
         }
     }
 }
-
-//测试
-{/*请求微信授权*/}
-export class Test extends Component{
-    componentDidMount(){
-        commonModule.setCookie("test",comeFromRouter,1);
-    }
-    render(){
-        return(
-            <div></div>
-        )
-    }
-};
-
-
-
 export default WeuiRoute;

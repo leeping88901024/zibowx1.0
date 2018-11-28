@@ -54,13 +54,18 @@ class Examination extends React.Component {
     handleDialogClick() {
         this.setState({ show: false });
    }
+
    handleResultDialogClick() {
     this.setState({ resultshow: false });
-    if (this.state.score > 60) {
+    if (this.state.score >= 60) {
         fetch(
             '/db/updtusrv',
             {
-                method: 'get'
+                method: 'get',
+                 credentials: "include",
+                 headers: {
+                     accept: 'application/json'
+                 }
             }
         ).then(res => res.json())
             .then(json => {
@@ -150,7 +155,6 @@ class Examination extends React.Component {
                                        }
                                        this.setState({score: tmp});
                                        this.setState({resultshow: true});
-                                        // console.log(tmp);
                                     }}>
                                     交卷
                         </Button>
@@ -187,7 +191,7 @@ class Examination extends React.Component {
                         <div>
                         <Article>
                             {this.state.score > 59 ? 
-                            <h1>你考试得分为: {this.state.score} 分,<br /><font color='#48B541'>考试未通过</font></h1>
+                            <h1>你考试得分为: {this.state.score} 分,<br /><font color='#48B541'>考试已通过</font></h1>
                             : <h1>你考试得分为: {this.state.score} 分,<br /><font color='red'>考试未通过</font></h1>}
                         </Article>
                         </div>

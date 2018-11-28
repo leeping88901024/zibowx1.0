@@ -18,7 +18,6 @@ class Example extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            url:'',
             type: 'account',
             autoLogin: true,
             visible: false,
@@ -34,28 +33,15 @@ class Example extends React.Component {
         this.handleLogin = this.handleLogin.bind(this);     
     }
 
-    componentDidMount(){
-        fetch('/loginwx/wx',
-        {
-            method: 'get',
-            headers: {
-                accept: 'application/json'
-            }
-        }).then(res => res.json())
-          .then(json => {
-              console.log(json.url)
-              this.setState({url: json.url})
-          });
-    }
-
     handleLogin(values) {
         let userinfo = {
             username: values.userName,
             password: values.password,
         }
 
-        if(userinfo.username == 'admin') {
-            if(userinfo.password == '8888') {
+        // 管理员用户
+        if(userinfo.username === 'admin') {
+            if(userinfo.password === '8888') {
                 this.props.history.push('/testhome3');
                 return;
             }
@@ -65,24 +51,26 @@ class Example extends React.Component {
             return;
         }
 
+        // 一般用户
         fetch(
             '/loginlocal',
             {
                 method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                credentials: "include",
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(userinfo)
             }   
         ).then(res => res.json())
          .then(json => {
-             if (json.url == '/login') {
+             // 如果登录失败
+             console.log(json);
+             if (json.url === '/loginl') {
                  this.setState({visible: true});
                  return;
              }
-             // console.log('and here ..')
-             // console.log(json.url)
+             // 否则
              this.props.history.push(json.url);
+             // window.location.href = json.url;
          })
     }
 

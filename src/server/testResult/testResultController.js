@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 var session = require('express-session');
 var testResultDao = require('./testResultDao');
+//日志
+var loggerFile = require("../logs/loggerFile");
+
 
 router.get('/queryTestResult',(req,res)=>{
     //获取session中的用户信息
@@ -43,6 +46,7 @@ router.get('/queryTestResult',(req,res)=>{
         res.send(resBody)
         return
     }).catch((err)=>{
+        loggerFile.error("来自testResultController:"+err);
         let resBody = {
             status : 10020,
             message:'查询出错'+err

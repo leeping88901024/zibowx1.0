@@ -1,6 +1,8 @@
 var rowsData = require('../utils/rowsProcess');
 var connPool = require("../connPool");
 var wxconfig = require("../wxconfig");
+//日志
+var loggerFile = require("../logs/loggerFile");
 
 var donBldAppointDao = {
     //加载所有的行政区
@@ -10,7 +12,7 @@ var donBldAppointDao = {
                 "select location_id,location_name from WX_REGION where active = 1",
                 function (err, result) {
                     if (err) {
-                        console.error(err.message);
+                        loggerFile.error("来自donBldAppointDao_loadRegion:加载所有的行政区失败"+err);
                         let resBody = {
                             status : 10017,
                             message:'加载数据失败'
@@ -30,13 +32,13 @@ var donBldAppointDao = {
                     if(connection){
                         connection.close((err) => {
                             if (err) {
-                                console.error(err);
+                                loggerFile.error("来自donBldAppointDao_loadRegion:关闭connection异常"+err);
                             }
                         });
                     }
                 });
         }).catch((err)=>{
-            console.error(err);
+            loggerFile.error("来自donBldAppointDao_loadRegion:加载所有的行政区失败"+err);
             let resBody = {
                 status : 10017,
                 message:'加载数据失败'
@@ -72,7 +74,7 @@ var donBldAppointDao = {
                 sql,
                 function (err, result) {
                     if (err) {
-                        console.error(err.message);
+                        loggerFile.error("来自donBldAppointDao_loadLocation:加载所有地点"+err);
                         let resBody = {
                             status : 10017,
                             message:'加载数据失败'
@@ -93,14 +95,14 @@ var donBldAppointDao = {
                     if(connection){
                         connection.close((err) => {
                             if (err) {
-                                console.error(err);
+                                loggerFile.error("来自donBldAppointDao_loadLocation:关闭数据库连接失败"+err);
                             }
                         });
                     }
                 });
 
         }).catch((err)=>{
-            console.error(err);
+            loggerFile.error("来自donBldAppointDao_loadLocation:加载所有地点"+err);
             let resBody = {
                 status : 10017,
                 message:'加载数据失败'
@@ -153,13 +155,14 @@ var donBldAppointDao = {
                 }
 
             } catch (err) { // catches errors in getConnection and the query
+                loggerFile.error("来自donBldAppointDao_getDnrReturnDate:查询献血者可献血日期"+err);
                 reject(err);
             } finally {
                 if (conn) {   // the conn assignment worked, must release
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自donBldAppointDao_getDnrReturnDate:"+e);
                     }
                 }
             }
@@ -204,13 +207,14 @@ var donBldAppointDao = {
                 }
 
             } catch (err) { // catches errors in getConnection and the query
+                loggerFile.error("来自donBldAppointDao_isAlreadyAppoint:验证用户是否已经预约异常"+err);
                 reject(err);
             } finally {
                 if (conn) {   // the conn assignment worked, must release
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自donBldAppointDao_isAlreadyAppoint:"+e);
                     }
                 }
             }
@@ -246,7 +250,7 @@ var donBldAppointDao = {
                 [locationType],
                 function (err, result) {
                     if (err) {
-                        console.error(err.message);
+                        loggerFile.error("来自donBldAppointDao_getLocationByType:"+err);
                         let resBody = {
                             status : 10017,
                             message:'加载数据失败'
@@ -265,13 +269,13 @@ var donBldAppointDao = {
                     if(connection){
                         connection.close((err) => {
                             if (err) {
-                                console.error(err);
+                                loggerFile.error("来自donBldAppointDao_getLocationByType:"+err);
                             }
                         });
                     }
                 });
         }).catch((err)=>{
-            console.error(err);
+            loggerFile.error("来自donBldAppointDao_getLocationByType:"+err);
             let resBody = {
                 status : 10017,
                 message:'加载数据失败'
@@ -312,13 +316,14 @@ var donBldAppointDao = {
                     //返回
                     resolve(dataArray);
                 } catch (err) { // catches errors in getConnection and the query
+                    loggerFile.error("来自donBldAppointDao_getEduNationProf:"+err);
                     reject(err);
                 } finally {
                     if (conn) {   // the conn assignment worked, must release
                         try {
                             await conn.release();
                         } catch (e) {
-                            console.error(e);
+                            loggerFile.error("来自donBldAppointDao_getEduNationProf:"+e);
                         }
                     }
                 }
@@ -336,20 +341,21 @@ var donBldAppointDao = {
                 //查询证件类型
                 let resultCertTypes = await conn.execute('SELECT DCT.CERT_TYPE_SEQ,DCT.CERTIFICATE_NAME FROM NBSSS.DNR_CERTIFICATE_TYPE@'+wxconfig.datalink+' DCT WHERE DCT.ACTIVE = 1');
                 if(false == resultCertTypes.rows){
-                    console.log("加载出的证件类型！");
+                    loggerFile.error("来自donBldAppointDao_getCertTypes:加载出的证件类型为空");
                 }else{
                     dataArray[0] =  rowsData.toMap(resultCertTypes.metaData,resultCertTypes.rows);
                 }
                 //返回
                 resolve(dataArray);
             } catch (err) { // catches errors in getConnection and the query
+                loggerFile.error("来自donBldAppointDao_getCertTypes:"+err);
                 reject(err);
             } finally {
                 if (conn) {   // the conn assignment worked, must release
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自donBldAppointDao_getCertTypes:"+e);
                     }
                 }
             }
@@ -427,7 +433,6 @@ var donBldAppointDao = {
                         );
                         //得到psn_seq
                         d_psn_seq = result_person.outBinds.ret;
-                        console.log("psn_seq："+d_psn_seq)
                         //插入证件类型和证件编号
                         let result_cert = await conn.execute("begin\n" +
                             "  a_recruit.new_dnr_psn_certificate(:p_psn_seq,\n" +
@@ -516,9 +521,11 @@ var donBldAppointDao = {
 
                 let result_record = result_recu_record.outBinds.ret;
                     conn.commit((err) => {
-                        console.log("提交错误:"+err)
+                        loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+err);
                         if (err != null) {
+                            loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+err);
                             conn.rollback((r_err) => {
+                                loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+r_err);
                                 reject(err);
                             })
                             reject(err);
@@ -595,7 +602,6 @@ var donBldAppointDao = {
                         );
                         //得到psn_seq
                         d_psn_seq = result_person.outBinds.ret;
-                        console.log("使用身份证的psn_seq："+d_psn_seq);
                     }else{
                         d_psn_seq = resCertSeq.rows;
                     }
@@ -671,9 +677,11 @@ var donBldAppointDao = {
 
                     let result_record = result_recu_record.outBinds.ret;
                     conn.commit((err) => {
-                        console.log("提交错误:"+err)
+                        loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+err);
                         if (err != null) {
+                            loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+err);
                             conn.rollback((r_err) => {
+                                loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+r_err);
                                 reject(err);
                             })
                             reject(err);
@@ -695,7 +703,6 @@ var donBldAppointDao = {
                         reject("psn_seq为空！");
                         return;
                     }
-                    console.log("不是第一次现学的psn_seq："+d_psn_seq);
                     //向dnr_recriut表插入数据
                     let result_recruit = await conn.execute(
                         "begin\n" +
@@ -768,8 +775,11 @@ var donBldAppointDao = {
 
                     let result_record = result_recu_record.outBinds.ret;
                     conn.commit((err) => {
+                        loggerFile.error("来自donBldAppointDao_insertAppointInfo不是第一次献血:"+err);
                         if (err != null) {
+                            loggerFile.error("来自donBldAppointDao_insertAppointInfo不是第一次献血:"+err);
                             conn.rollback((r_err) => {
+                                loggerFile.error("来自donBldAppointDao_insertAppointInfo不是第一次献血:"+r_err);
                                 reject(err);
                             })
                             reject(err);
@@ -784,9 +794,10 @@ var donBldAppointDao = {
                     resolve(reObj);
                 }
             } catch (err) { // catches errors in getConnection and the query
-                console.log("异常来自donAppointDao-insertAppointInfo:"+err)
+                loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+err);
                 conn.rollback((r_err)=>{
-                    reject(err);
+                    loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+r_err);
+                    reject(r_err);
                 })
                 reject(err);
             } finally {
@@ -794,7 +805,7 @@ var donBldAppointDao = {
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自donBldAppointDao_insertAppointInfo:"+e);
                     }
                 }
             }
@@ -825,18 +836,19 @@ var donBldAppointDao = {
                     [parseInt(psn_seq)]);
                 console.log(JSON.stringify(resultEdu))
                 if(false == resultEdu.rows){
-                    console.log("预约数据为空");
+                    loggerFile.error("来自donBldAppointDao_getAppointRecordByPsnseq:预约数据为空");
                 }else{
                     resolve(rowsData.toMap(resultEdu.metaData,resultEdu.rows));
                 }
             } catch (err) {
+                loggerFile.error("来自donBldAppointDao_getAppointRecordByPsnseq:"+err);
                 reject(err);
             } finally {
                 if (conn) {
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自donBldAppointDao_getAppointRecordByPsnseq:"+e);
                     }
                 }
             }
@@ -866,7 +878,7 @@ var donBldAppointDao = {
                     [recruit_seq]);
 
                 if(false == resultEdu.rows){
-                    console.log("预约数据为空");
+                    loggerFile.error("来自donBldAppointDao_getAppointRecordByRecruitSeq:预约数据为空");
                 }else{
                     resolve(rowsData.toMap(resultEdu.metaData,resultEdu.rows));
                 }
@@ -877,7 +889,7 @@ var donBldAppointDao = {
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自donBldAppointDao_getAppointRecordByRecruitSeq:"+e);
                     }
                 }
             }
@@ -917,9 +929,12 @@ var donBldAppointDao = {
 
                     let result_record = result_recu_record.outBinds.ret;
                     conn.commit((err) => {
+                        loggerFile.error("来自donBldAppointDao_cancelAppoint:"+err);
                         if (err != null) {
+                            loggerFile.error("来自donBldAppointDao_cancelAppoint:"+err);
                             conn.rollback((r_err) => {
-                                reject(err);
+                                loggerFile.error("来自donBldAppointDao_cancelAppoint:"+r_err);
+                                reject(r_err);
                             })
                             reject(err);
                         }
@@ -928,8 +943,10 @@ var donBldAppointDao = {
                     resolve(result_record);
 
             } catch (err) { // catches errors in getConnection and the query
+                loggerFile.error("来自donBldAppointDao_cancelAppoint:"+err);
                 conn.rollback((r_err)=>{
-                    reject(err);
+                    loggerFile.error("来自donBldAppointDao_cancelAppoint:"+r_err);
+                    reject(r_err);
                 })
                 reject(err);
             } finally {
@@ -937,7 +954,7 @@ var donBldAppointDao = {
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自donBldAppointDao_cancelAppoint:"+e);
                     }
                 }
             }
@@ -955,19 +972,19 @@ var donBldAppointDao = {
                     ' WHERE LD.LOCATION_SEQ = :SEQ',
                     [locSeq]);
                 if(false == resultEdu.rows){
-                    console.log("地址数据为空");
+                    loggerFile.error("来自donBldAppointDao_loadAddressByLocSeq:地址数据为空！");
                 }else{
-                    console.log(resultEdu.rows);
                     resolve(rowsData.toMap(resultEdu.metaData,resultEdu.rows));
                 }
             } catch (err) {
+                loggerFile.error("来自donBldAppointDao_loadAddressByLocSeq:"+err);
                 reject(err);
             } finally {
                 if (conn) {
                     try {
                         await conn.release();
                     } catch (e) {
-                        console.error(e);
+                        loggerFile.error("来自donBldAppointDao_loadAddressByLocSeq:"+e);
                     }
                 }
             }
@@ -990,10 +1007,9 @@ var donBldAppointDao = {
                 '                     WHERE P.PSN_SEQ = :PSN_SEQ',
                 [psn_seq]);
             if(false == resultEdu.rows){
-                console.log("身份信息为空");
+                loggerFile.error("来自donBldAppointDao_loadDonorInfoByPsnseq:身份信息为空");
             }else{
                 let donor = JSON.parse(rowsData.toMap(resultEdu.metaData,resultEdu.rows));
-                console.log("我是idcard:"+donor.IDCARD);
                 if(donor.IDCARD == null){
                     let resultEdu = await conn.execute('SELECT PC.CERT_TYPE_SEQ,\n' +
                         '       PC.CERTIFICATE_NBR,\n' +
@@ -1011,13 +1027,14 @@ var donBldAppointDao = {
                 resolve(donor);
             }
         } catch (err) {
+            loggerFile.error("来自donBldAppointDao_loadDonorInfoByPsnseq:"+err);
             reject(err);
         } finally {
             if (conn) {
                 try {
                     await conn.release();
                 } catch (e) {
-                    console.error(e);
+                    loggerFile.error("来自donBldAppointDao_loadDonorInfoByPsnseq:"+e);
                 }
             }
         }

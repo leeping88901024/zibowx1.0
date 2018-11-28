@@ -2,11 +2,14 @@ import React,{ Component }  from 'react';
 import 'antd/dist/antd.css';
 import Home2  from "../Home2";
 
-import {Form, Icon, Input, Button, Checkbox, Select, TimePicker, Upload, message, Modal} from 'antd';
+import {Tooltip,Form, Icon, Input, Button, Checkbox, Select, TimePicker, Upload, message, Modal,Tree} from 'antd';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
 const CheckboxGroup = Checkbox.Group;
+
+const TreeNode = Tree.TreeNode;
+const Search = Input.Search;
 
 
 /**
@@ -396,6 +399,209 @@ class LocationList extends React.Component{
 }
 
 /**
+ * 微信 菜单献血须知媒体消息设置
+ */
+const x = 3;
+const y = 2;
+const z = 1;
+var gData = [];
+
+const generateData = (_level, _preKey, _tns) => {
+//请求服务器获取数据
+    fetch('/public/admin/locationSet/loalAllWxMediaFromWx', {credentials: "include"})
+        .then((response) => response.json())
+        .then((responseJson) => {
+                if(responseJson.status == 200){
+                    var resu = new Array();
+                    var children = new Array();
+                   responseJson.data.item.map((item,i)=>{
+                        item.content.news_item.map((news,j)=>{
+                            children = children.concat({title:news.title,key:news.title+i})
+                        });
+                        resu = resu.concat({title:item.media_id,key:item.media_id,children});
+                        children = [];
+                    });
+                    console.log("我是resu："+resu);
+                    gData = resu;
+                    generateList(gData);
+                }else{
+                    alert(responseJson.message);
+                }
+            }
+        ).catch(function(error){
+            console.log("加载微信媒体消息失败！来自控件sysSetting:"+error);
+    });
+/*
+    const preKey = _preKey || '0';
+    const tns = _tns || gData;
+
+    const children = [];
+    for (let i = 0; i < x; i++) {
+        const key = `${preKey}-${i}`;
+        tns.push({ title: key, key });
+        if (i < y) {
+            children.push(key);
+        }
+    }
+    if (_level < 0) {
+        return tns;
+    }
+    const level = _level - 1;
+    children.forEach((key, index) => {
+        tns[index].children = [];
+        return generateData(level, key, tns[index].children);
+    });
+*/
+};
+
+const dataList = [];
+const generateList = (data) => {
+    console.log("我是data"+data);
+    for (let i = 0; i < data.length; i++) {
+        const node = data[i];
+        const key = node.key;
+        dataList.push({ key, title: key });
+        if (node.children) {
+            generateList(node.children, node.key);
+        }
+    }
+};
+
+const getParentKey = (key, tree) => {
+    let parentKey;
+    for (let i = 0; i < tree.length; i++) {
+        const node = tree[i];
+        if (node.children) {
+            if (node.children.some(item => item.key === key)) {
+                parentKey = node.key;
+            } else if (getParentKey(key, node.children)) {
+                parentKey = getParentKey(key, node.children);
+            }
+        }
+    }
+    return parentKey;
+};
+
+/**
+ * 献血须知菜单媒体消息控件
+ */
+class BldNotice extends React.Component {
+    state = {
+        expandedKeys: [],
+        searchValue: '',
+        autoExpandParent: true,
+        checkedKeys: [],
+        selectedKeys: [],
+    }
+
+    componentDidMount(){
+        generateData(z);
+    }
+
+    onExpand = (expandedKeys) => {
+        this.setState({
+            expandedKeys,
+            autoExpandParent: false,
+        });
+    }
+
+    onChange = (e) => {
+        const value = e.target.value;
+        const expandedKeys = dataList.map((item) => {
+            if (item.title.indexOf(value) > -1) {
+                return getParentKey(item.key, gData);
+            }
+            return null;
+        }).filter((item, i, self) => item && self.indexOf(item) === i);
+        this.setState({
+            expandedKeys,
+            searchValue: value,
+            autoExpandParent: true,
+        });
+    };
+
+    onCheck = (checkedKeys) => {
+        console.log('onCheck', checkedKeys);
+        this.setState({ checkedKeys });
+    };
+
+    onSelect = (selectedKeys, info) => {
+        console.log('onSelect', info);
+        this.setState({ selectedKeys });
+    };
+//设置按钮
+    setClick =()=>{
+        //检查check数组
+        if(this.state.checkedKeys.length > 1){
+            alert("只能设置一条");
+        }else if(this.state.checkedKeys.length <1 ){
+            alert("请选择要设置为献血须知菜单推送媒体消息的nedia_id");
+        }else{
+            //提交数据到服务器
+            fetch('/public/admin/locationSet/setDonNoticeMenu?mediaId='+this.state.checkedKeys[0],
+                {credentials: "include",
+                    headers:{'Content-Type': 'application/json'},
+                })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    if(responseJson.status == 200){
+                        alert("设置成功！");
+                    }else{
+                        alert(responseJson.message);
+                    }
+                }).catch(function(error){
+                alert("设置失败！"+error);
+            })
+        }
+    }
+
+
+    render() {
+        const { searchValue, expandedKeys, autoExpandParent } = this.state;
+        const loop = data => data.map((item) => {
+            const index = item.title.indexOf(searchValue);
+            const beforeStr = item.title.substr(0, index);
+            const afterStr = item.title.substr(index + searchValue.length);
+            const title = index > -1 ? (
+                <span>
+          {beforeStr}
+                    <span style={{ color: '#f50' }}>{searchValue}</span>
+                    {afterStr}
+        </span>
+            ) : <span>{item.title}</span>;
+            if (item.children) {
+                return (
+                    <TreeNode key={item.key} title={title}>
+                        {loop(item.children)}
+                    </TreeNode>
+                );
+            }
+            return <TreeNode key={item.key} title={title} disableCheckbox />;
+        });
+        return (
+            <div>
+                <div style={{diplay:'block',height:'6vh',marginBottom:'2vh'}}><Tooltip placement="topLeft" title="提示:通过微信公众号编辑图文消息，保存到微信，在此页面选中需要设置到献血须知菜单推送的图文消息，点击设置按钮，重新生成菜单" arrowPointAtCenter>
+                    <Button>帮助</Button>
+                </Tooltip><Button type="primary" size="large " style={{float:'right'}} onClick={this.setClick} >设置</Button></div>
+                <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={this.onChange} />
+                <Tree
+                    checkable
+                    onExpand={this.onExpand}
+                    expandedKeys={expandedKeys}
+                    autoExpandParent={autoExpandParent}
+                    onCheck={this.onCheck}
+                    checkedKeys={this.state.checkedKeys}
+                    onSelect={this.onSelect}
+                    selectedKeys={this.state.selectedKeys}
+                >
+                    {loop(gData)}
+                </Tree>
+            </div>
+        );
+    }
+}
+
+/**
  * 系统设置
  */
 class AdminLocationSetting extends React.Component {
@@ -403,7 +609,6 @@ class AdminLocationSetting extends React.Component {
         const paramsString = this.props.location.search.substring(1);
         const searchParams = new URLSearchParams(paramsString);
         const seq = searchParams.get('location_seq');
-        console.log("我是seq："+seq)
         return (<Home2><LocationSettingForm  locationSeq={seq} /></Home2>)
     }
 }
@@ -416,4 +621,13 @@ class AdminLocationList extends React.Component {
     }
 }
 
-export {AdminLocationSetting,AdminLocationList};
+/**
+ * 微信 菜单献血须知媒体消息设置
+ */
+class AdminBldNotice extends React.Component {
+    render() {
+        return (<Home2><BldNotice  /></Home2>)
+    }
+}
+
+export {AdminLocationSetting,AdminLocationList,AdminBldNotice};

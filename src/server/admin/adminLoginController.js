@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 var session = require('express-session');
 const NodeRSA = require('node-rsa')
-const fs = require('fs')
+const fs = require('fs');
+
 
 /**
  * 生成公钥密钥

@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var session = require('express-session');
 var donBldAppointDao =  require('./donAppointDao');
-var genetateSign = require('../wx_process/wx_js_sdk_cfg');
 var commonModule = require("../commonModule")
+//日志
+var loggerFile = require("../logs/loggerFile");
 
 //加载行政区域
 router.get('/loadRegion',(req,res)=>{
@@ -20,27 +21,7 @@ router.get('/getLocationById',(req,res)=>{
     var locType = req.query.locType;
     donBldAppointDao.getLocationByType(res,locType)
 });
-//生成调用微信js-sdk配置信息给客户端
-router.post('/getWxJsSdkCfgParms',(req,res)=>{
-    //获取参数
-    var url = req.body.url;
-     genetateSign(url).then((result)=>{
-         let resBody = {
-             status:200,
-             message:'ok',
-             data:result
-         }
-         //响应给客户端
-         res.send(resBody);
-     }).catch((err)=>{
-         let resBody = {
-             status:10017,
-             message:'加载数据失败！'+err,
-         }
-         //响应给客户端
-         res.send(resBody);
-     });
-})
+
 /**
  * 献血征询
  * @type {Router|router}
@@ -134,7 +115,6 @@ router.post('/donBldConsult',(req,res)=>{
     }
     //验证用户是否有待献血记录
     donBldAppointDao.isAlreadyAppoint(p_certtype == p_idcardSeq,p_certtype,p_idcard,p_appointDate).then((result)=>{
-        console.log(result)
         if(result == false){
             let resBody = {
                 status:10023,
@@ -211,7 +191,7 @@ router.post('/donBldConsult',(req,res)=>{
         //把数据保存到session
         req.session.consult = consult;
         }).catch((err)=>{
-            console.log("验证是否有待献血记录异常"+err);
+            loggerFile.error("来自donAppointContraller_donBldConsult:验证是否有待献血记录异常"+err)
             let resBody = {
                 status:500,
                 message:"服务器内部错误！"
@@ -234,7 +214,7 @@ router.get('/loadEduNationProfess',(req,res)=>{
        res.send(resBody);
        return
     }).catch((err)=>{
-        console.log('加载学历职业民族出错'+err);
+        loggerFile.error("来自donAppointContraller:加载学历职业民族出错"+err)
         let  resBody = {
             status:10017,
             message:'加载数据失败'+err
@@ -344,6 +324,7 @@ router.post('/donBldDetail',(req,res)=>{
         res.send(resBody)
         return
     }).catch((err)=>{
+        loggerFile.error('来自donAppointContraller:微信预约失败'+err);
         let resBody = {
             status:10019,
             message:'微信预约失败'+err
@@ -366,7 +347,7 @@ router.get('/loadCertTypes',(req,res)=>{
         res.send(resBody);
         return
     }).catch((err)=>{
-        console.log('加载证件类型失败!来自donAppointController:'+err);
+        loggerFile.error('来自donAppointContraller:加载证件类型失败!'+err);
         let  resBody = {
             status:10017,
             message:'加载数据失败'+err
@@ -399,7 +380,7 @@ router.get('/getAppointRecd',(req,res)=>{
         res.send(resBody);
         return
     }).catch((err)=>{
-        console.log('加载预约记录失败!来自donAppointController:'+err);
+        loggerFile.error('加载预约记录失败!来自donAppointController:'+err);
         let  resBody = {
             status:10017,
             message:'加载数据失败'+err
@@ -443,7 +424,7 @@ router.get('/loadMyAppointRecord',(req,res)=>{
         res.send(resBody);
         return
     }).catch((err)=>{
-        console.log('加载预约记录失败!来自donAppointController:'+err);
+        loggerFile.error('加载预约记录失败!来自donAppointController:'+err);
         let  resBody = {
             status:10017,
             message:'加载数据失败'+err
@@ -457,7 +438,6 @@ router.get('/loadMyAppointRecord',(req,res)=>{
  */
 router.post('/cancelAppoint',(req,res)=>{
     var recruitSeq = req.body.recruitSeq;
-    console.log("我是那啥seq："+recruitSeq)
     if(recruitSeq == null){
         let  resBody = {
             status:10017,
@@ -477,7 +457,7 @@ router.post('/cancelAppoint',(req,res)=>{
         res.send(resBody);
         return
     }).catch((err)=>{
-        console.log('取消预约失败!来自donAppointController:'+err);
+        loggerFile.error('取消预约失败!来自donAppointController:'+err);
         let  resBody = {
             status:10017,
             message:'取消预约失败'+err
@@ -541,7 +521,7 @@ router.get("/loadDonorInfo",(req,res)=>{
         res.send(resBody);
         return
     }).catch((err)=>{
-        console.log('加载献血者身份信息失败!来自donAppointController:'+err);
+        loggerFile.error('加载献血者身份信息失败!来自donAppointController:'+err);
         let  resBody = {
             status:10017,
             message:'加载数据失败'+err

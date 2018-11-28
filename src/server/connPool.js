@@ -1,4 +1,6 @@
 var oracledb = require('oracledb');
+//日志
+var loggerFile = require("./logs/loggerFile");
 /**
  * 数据库连接池
  * @type {{getZibowxConn: (function(): Promise<any>), getNbsssConn: (function(): Promise<any>)}}
@@ -17,6 +19,7 @@ var connPool = {
                         pool.getConnection (
                             function(err, connection) {
                                 if(err){
+                                    loggerFile.error("获取淄博微信数据库连接异常:"+err);
                                     reject('获取连接异常！');
                                     return;
                                 }
@@ -24,6 +27,7 @@ var connPool = {
                             });
                     });
             } catch (err) { // catches errors in getConnection and the query
+                loggerFile.error("获取淄博微信数据库连接异常:"+err);
                 reject(err);
             }
         });
@@ -41,6 +45,7 @@ var connPool = {
                         pool.getConnection (
                             function(err, connection) {
                                 if(err){
+                                    loggerFile.error("获取NBSSS数据库连接异常:"+err);
                                     reject('获取连接异常！');
                                     return;
                                 }
@@ -48,6 +53,7 @@ var connPool = {
                             });
                     });
             } catch (err) { // catches errors in getConnection and the query
+                loggerFile.error("获取NBSSS数据库连接异常:"+err);
                 reject(err);
             }
         });

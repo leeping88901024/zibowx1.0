@@ -1,5 +1,4 @@
 import React,{ Component }  from 'react';
-import ReactDOM from 'react-dom';
 import {
     Preview,
     PreviewHeader,
@@ -112,7 +111,6 @@ class DonBldConsult extends React.Component {
                     }
                 ],
                 donType: 0,
-                nextAbled : true
             });
         }
 
